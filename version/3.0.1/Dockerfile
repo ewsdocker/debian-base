@@ -8,7 +8,7 @@
 # =========================================================================
 #
 # @author Jay Wheeler.
-# @version 3.0.2
+# @version 3.0.1
 # @copyright © 2017, 2018. EarthWalk Software.
 # @license Licensed under the Academic Free License version 3.0
 # @package debian-base
