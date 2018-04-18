@@ -1,15 +1,15 @@
 ## debian-base
-**ewsdocker/debian-base** is a version of the *nimmis/ubuntu* docker image modified for use with *Debian 9*.  It adds several system utilities and libraries that are nominally required to properly utilize the *library/debian:9.4* docker image, and adds system initialization and supervisor functions for better control.  
+**ewsdocker/debian-base** is a version of the *nimmis/ubuntu* docker image modified for use with *Debian 9*.  It adds several system utilities and libraries that are nominally required to properly utilize the *library/debian* docker image, and adds system initialization and supervisor functions for better control.  
 ____  
 
 ## ewsdocker/debian-base Wiki  
 
-Please visit our [**ewsdocker/debian-base Wiki**](https://github.com/ewsdocker/debian-base/wiki/QuickStart) for complete documentation of this docker image.  
+Please visit our [**ewsdocker/debian-base Wiki**](https://github.com/ewsdocker/debian-base/wiki) for complete documentation of this docker image.  
 ____  
 
 ### About Docker Versions  
 
-Find out all that you need to know about the docker Tags, and the version of ewsdocker/debian-base represented, at [Docker Tags](https://github.com/ewsdocker/debian-base/wiki/DockerTags).  
+Find out all that you need to know about the docker Tags, and the version of **ewsdocker/debian-base** represented, at [Docker Tags](https://github.com/ewsdocker/debian-base/wiki/DockerTags).  
 _____________________  
 
 **docker pull** will pull the **latest** image by default.  This image is the highest tag number that is ready for use, but not yet "stable".
