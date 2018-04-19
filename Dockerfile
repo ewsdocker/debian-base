@@ -73,6 +73,10 @@ RUN dpkg-divert --local --rename --add /sbin/initctl \
  && apt-get clean all \
  && locale-gen en_US \
  && update-locale LANG=C.UTF-8 LC_MESSAGES=POSIX \
+ && mkdir -p /etc/workaround-docker-2267/ \
+ && mkdir -p /etc/container_environment \
+ && mkdir -p /etc/my_runonce \
+ && mkdir -p /etc/my_runalways \
  && sed -i -E 's/^(\s*)system\(\);/\1unix-stream("\/dev\/log");/' /etc/syslog-ng/syslog-ng.conf 
 
 COPY scripts/. /
