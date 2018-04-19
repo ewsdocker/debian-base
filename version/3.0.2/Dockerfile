@@ -8,7 +8,7 @@
 # =========================================================================
 #
 # @author Jay Wheeler.
-# @version 3.0.3
+# @version 3.0.2
 # @copyright © 2017, 2018. EarthWalk Software.
 # @license Licensed under the Academic Free License version 3.0
 # @package debian-base
@@ -80,5 +80,5 @@ COPY scripts/. /
 ENV HOME /root
 WORKDIR /root
 
-ENTRYPOINT ["/my_init", "--quiet"]
+ENTRYPOINT ["/my_init"]
 CMD ["/bin/bash"]
