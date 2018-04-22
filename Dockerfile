@@ -8,7 +8,7 @@
 # =========================================================================
 #
 # @author Jay Wheeler.
-# @version 3.0.3
+# @version 3.0.4
 # @copyright © 2017, 2018. EarthWalk Software.
 # @license Licensed under the Academic Free License version 3.0
 # @package debian-base
@@ -52,6 +52,7 @@ RUN dpkg-divert --local --rename --add /sbin/initctl \
        cron \
        curl \
        git \
+       gnupg2 \
        less \
        libcurl3-gnutls \
        locales \
