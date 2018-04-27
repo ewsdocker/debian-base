@@ -8,32 +8,21 @@
 # =========================================================================
 #
 # @author Jay Wheeler.
-# @version 3.0.4
+# @version 3.0.3
 # @copyright © 2017, 2018. EarthWalk Software.
-# @license Licensed under the GNU General Public License, GPL-3.0-or-later.
-# @package ewsdocker/debian-base
+# @license Licensed under the Academic Free License version 3.0
+# @package debian-base
 # @subpackage Dockerfile
 #
 # =========================================================================
 #
 #	Copyright © 2017, 2018. EarthWalk Software
-#	Licensed under the GNU General Public License, GPL-3.0-or-later.
+#	Licensed under the Academic Free License, version 3.0.
 #
-#   This file is part of ewsdocker/debian-base.
+#	Refer to the file named License.txt provided with the source,
+#	or from
 #
-#   ewsdocker/debian-base is free software: you can redistribute 
-#   it and/or modify it under the terms of the GNU General Public License 
-#   as published by the Free Software Foundation, either version 3 of the 
-#   License, or (at your option) any later version.
-#
-#   ewsdocker/debian-base is distributed in the hope that it will 
-#   be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
-#   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with ewsdocker/debian-base.  If not, see 
-#   <http://www.gnu.org/licenses/>.
+#		http://opensource.org/licenses/academic.php
 #
 # =========================================================================
 # =========================================================================
@@ -50,15 +39,6 @@ MAINTAINER Jay Wheeler <EarthWalkSoftware@gmail.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 
-# =========================================================================
-
-ENV LMSBUILD_VERSION="3.0.4"
-ENV LMSBUILD_NAME=debian-base 
-ENV LMSBUILD_DOCKER="ewsdocker/${LMSBUILD_NAME}:${LMSBUILD_VERSION}" 
-ENV LMSBUILD_PACKAGE="debian-9.4"
-
-# =========================================================================
-
 RUN dpkg-divert --local --rename --add /sbin/initctl \
  && ln -sf /bin/true /sbin/initctl \
  && echo 'APT::Install-Recommends 0;' >> /etc/apt/apt.conf.d/01norecommends \
@@ -72,7 +52,6 @@ RUN dpkg-divert --local --rename --add /sbin/initctl \
        cron \
        curl \
        git \
-       gnupg2 \
        less \
        libcurl3-gnutls \
        locales \
@@ -98,14 +77,9 @@ RUN dpkg-divert --local --rename --add /sbin/initctl \
  && mkdir -p /etc/container_environment \
  && mkdir -p /etc/my_runonce \
  && mkdir -p /etc/my_runalways \
- && sed -i -E 's/^(\s*)system\(\);/\1unix-stream("\/dev\/log");/' /etc/syslog-ng/syslog-ng.conf \
- && printf "${LMSBUILD_DOCKER} (${LMSBUILD_PACKAGE}), %s @ %s\n" `date '+%Y-%m-%d'` `date '+%H:%M:%S'` > /etc/ewsdocker-builds.txt 
-
-# =========================================================================
+ && sed -i -E 's/^(\s*)system\(\);/\1unix-stream("\/dev\/log");/' /etc/syslog-ng/syslog-ng.conf 
 
 COPY scripts/. /
-
-# =========================================================================
 
 ENV HOME /root
 WORKDIR /root
