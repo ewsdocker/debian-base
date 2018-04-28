@@ -39,6 +39,14 @@
 # =========================================================================
 # =========================================================================
 
+lines=()
+mapfile -t lines < /etc/ewsdocker-builds.txt
+
 echo
-echo $(cat /etc/ewsdocker-builds.txt)
+
+for line in "${lines[@]}"
+do
+  echo ${line}
+done
+
 echo

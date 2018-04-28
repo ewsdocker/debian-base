@@ -99,7 +99,8 @@ RUN dpkg-divert --local --rename --add /sbin/initctl \
  && mkdir -p /etc/my_runonce \
  && mkdir -p /etc/my_runalways \
  && sed -i -E 's/^(\s*)system\(\);/\1unix-stream("\/dev\/log");/' /etc/syslog-ng/syslog-ng.conf \
- && printf "${LMSBUILD_DOCKER} (${LMSBUILD_PACKAGE}), %s @ %s\n" `date '+%Y-%m-%d'` `date '+%H:%M:%S'` > /etc/ewsdocker-builds.txt 
+ && echo "Debian v. $(cat /etc/debian_version)" >  /etc/ewsdocker-builds.txt \
+ && printf "${LMSBUILD_DOCKER} (${LMSBUILD_PACKAGE}), %s @ %s\n" `date '+%Y-%m-%d'` `date '+%H:%M:%S'` >> /etc/ewsdocker-builds.txt  
 
 # =========================================================================
 
