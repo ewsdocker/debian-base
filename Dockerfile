@@ -3,12 +3,12 @@
 #
 #	Dockerfile
 #	  Dockerfile for debian-base (docker utilities base) 
-#		in a Debian 9.4 docker container.
+#		in a Debian container.
 #
 # =========================================================================
 #
 # @author Jay Wheeler.
-# @version 3.0.4
+# @version 3.0.5
 # @copyright © 2017, 2018. EarthWalk Software.
 # @license Licensed under the GNU General Public License, GPL-3.0-or-later.
 # @package ewsdocker/debian-base
