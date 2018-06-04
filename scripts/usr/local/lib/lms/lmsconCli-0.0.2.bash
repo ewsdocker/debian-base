@@ -191,3 +191,26 @@ function lmsSplitParameter()
     return 0
 }
 
+# **************************************************************************
+#
+#	lmsCliParse
+#
+#        Parse the global cli buffer (cliBuffer) 
+#           into the global parameter array (cliParam)
+#
+# **************************************************************************
+function lmsCliParse()
+{
+    [[ ${#cliBuffer} -eq 0 ]] && return 0
+
+    local pString
+
+    for pString in "${cliBuffer[@]}"
+    do
+        splitParameter "${pString}"
+		[[ $? -eq 0 ]] || return 1
+    done
+
+    return 0
+}
+

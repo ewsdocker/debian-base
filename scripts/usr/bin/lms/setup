@@ -1,62 +1,71 @@
-# =========================================================================
+#!/bin/bash
+#=========================================================================
 # =========================================================================
 #
-#	lmsconDisplay
-#     display a message on the console and/or to a log file
+#	setup
+#	  Copy run scripts to /userbin.
 #
 # =========================================================================
 #
 # @author Jay Wheeler.
-# @version 0.1.0
-# @copyright © 2016, 2018. EarthWalk Software.
+# @version 0.0.2
+# @copyright © 2018. EarthWalk Software.
 # @license Licensed under the GNU General Public License, GPL-3.0-or-later.
-# @package ewsdocker/debian-kaptain-menu
-# @subpackage lmsconDisplay
+# @package ewsdocker/debian-base
+# @subpackage setup
 #
 # =========================================================================
 #
-#	Copyright © 2016, 2018. EarthWalk Software
+#	Copyright © 2018. EarthWalk Software
 #	Licensed under the GNU General Public License, GPL-3.0-or-later.
 #
-#   This file is part of ewsdocker/debian-kaptain-menu.
+#   This file is part of ewsdocker/debian-base.
 #
-#   ewsdocker/debian-kaptain-menu is free software: you can redistribute 
+#   ewsdocker/debian-base is free software: you can redistribute 
 #   it and/or modify it under the terms of the GNU General Public License 
 #   as published by the Free Software Foundation, either version 3 of the 
 #   License, or (at your option) any later version.
 #
-#   ewsdocker/debian-kaptain-menu is distributed in the hope that it will 
+#   ewsdocker/debian-base is distributed in the hope that it will 
 #   be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
 #   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #   GNU General Public License for more details.
 #
 #   You should have received a copy of the GNU General Public License
-#   along with ewsdocker/debian-kaptain-menu.  If not, see 
+#   along with ewsdocker/debian-base.  If not, see 
 #   <http://www.gnu.org/licenses/>.
 #
 # =========================================================================
 # =========================================================================
 
-declare    lmscon_buffer=""
+. /usr/local/lib/lms/lmsconCli-0.0.2.bash
+. /usr/local/lib/lms/lmsVersion-0.0.1.bash
 
 # =========================================================================
 #
-#   lmsconDisplay
-#		display message on the console
-#
-#	parameters:
-#		message = message to display
-#	returns:
-#		0 = no errors
-#		non-zero = error code
+#    Display the version stack
 #
 # =========================================================================
-function lmsconDisplay()
-{
-    lmscon_buffer="${1}"
 
-    [[ ${lmscli_optQuiet} -eq 0 ]] || return 0
+lmsVersion
 
-    [[ -z "${2}" ]] && echo "${lmscon_buffer}" || echo -n "${lmscon_buffer}"
-}
+# =========================================================================
+#
+#    copy /usr/local subdirectories to the directory specified in LMS_BASE
+#		environment variable in the cli parameters to start setup
+#
+# =========================================================================
 
+mkdir -p /usrlocal/share/lms
+mkdir -p /usrlocal/lib/lms
+mkdir -p /usrlocal/bin
+
+cp -r /usr/local/share/*   /usrlocal/share
+cp -r /usr/local/lib/lms/* /usrlocal/lib/lms
+cp    /usr/local/bin/*     /usrlocal/bin
+
+echo
+echo "Internal setup completed."
+echo
+
+exit 0

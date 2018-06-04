@@ -1,0 +1,259 @@
+#!/bin/bash
+# =========================================================================
+# =========================================================================
+#
+#	debian-docker-start
+#	  Creates a new container, if needed, then starts it.
+#
+# =========================================================================
+#
+# @author Jay Wheeler.
+# @version 0.0.1
+# @copyright © 2018. EarthWalk Software.
+# @license Licensed under the GNU General Public License, GPL-3.0-or-later.
+# @package ewsdocker/debian-base
+# @subpackage debian-docker-start
+#
+# =========================================================================
+#
+#	Copyright © 2018. EarthWalk Software
+#	Licensed under the GNU General Public License, GPL-3.0-or-later.
+#
+#   This file is part of ewsdocker/debian-docker-start.
+#
+#   ewsdocker/debian-docker-start is free software: you can redistribute 
+#   it and/or modify it under the terms of the GNU General Public License 
+#   as published by the Free Software Foundation, either version 3 of the 
+#   License, or (at your option) any later version.
+#
+#   ewsdocker/debian-docker-start is distributed in the hope that it will 
+#   be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
+#   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with ewsdocker/debian-docker-start.  If not, see 
+#   <http://www.gnu.org/licenses/>.
+#
+# =========================================================================
+# =========================================================================
+
+declare    lmsContainer_name=""
+declare    lmsContainer_status=""
+declare    lmsContainer_pass=0
+
+# =========================================================================================
+# =========================================================================================
+
+source ${LMS_LIB}/lmsconCli-0.0.2.bash
+source ${LMS_LIB}/lmsconDisplay-0.0.1.bash
+
+# =========================================================================================
+# =========================================================================================
+
+# =========================================================================================
+#
+#	getStatus
+#
+#		get the current status of the application
+#
+#	parameters:
+#
+#		filters = string to explode
+#    Result:
+#        0 = no error
+#        non-zero = error number
+#
+# =========================================================================================
+function getStatus()
+{
+  local status="${1}"
+
+  lmsContainer_status=$(docker ps -a --filter name=${container} --filter status="${status}" )
+  [[ $? -eq 0 ]] || 
+   {
+     lmsconDisplay "docker ps failed."
+     return 1
+   }
+
+  return 0
+}
+
+# =========================================================================================
+# =========================================================================================
+
+# =========================================================================================
+#
+#
+#   checkStaus
+#
+#  		Check the requested status and the search string present
+#
+#   parameters:
+#      $pStatus = (string) Status to check for (refer to docker ps)
+#      $pSearch = (string) Value to search for in $lmsContainer_status
+#
+#	returns:
+#      0 = status matched and search value was found
+#      1 = docker ps failed
+#      2 = status or search string did not match
+#
+# =========================================================================================
+function checkStatus()
+{
+    local pStatus="${1}"
+    local pSearch="${2}"
+
+	getStatus "${pStatus}"
+	[[ $? -eq 0 ]] || return 1
+
+	if echo "${lmsContainer_status}" | grep -q "${pSearch}" ; then return 0
+
+	return 2
+}
+
+# =========================================================================================
+#
+#   isRunning
+#
+#   	returns 0 if running, 1 if doesn't exist or exec. error, 2 no match
+#
+#   parameters:
+#      $pStatus = (string) Status to check for (refer to docker ps)
+#      $pSearch = (string) Value to search for in $lmsContainer_status
+#
+#	returns:
+#      0 = status matched and search value was found
+#      1 = docker ps failed
+#      2 = status or search string did not match
+#
+# =========================================================================================
+function isRunning()
+{
+    checkStatus "running" "Up"
+    [[ $? -ne 2 ]] && return $?
+
+    checkStatus "exited" "Exited"
+    [[ $? -ne 2 ]] && 
+     {
+         [[ $? -eq 0 ]] || return $?
+       
+         docker start ${lmsContainer_name}
+         [[ $? -eq 0 ]] || return 1
+
+	     return 0
+	 }
+
+	checkStatus "created" "Created"
+    [[ $? -ne 2 ]] && 
+     {
+         [[ $? -eq 0 ]] || return $?
+       
+         docker start ${lmsContainer_name}
+         [[ $? -eq 0 ]] || return 1
+
+	     return 0
+	 }
+
+    [[ ${lmsContainer_pass} -eq 0 ]] || return 1
+
+	if [ -e "~/bin/${lmsContainer_name}.run" ]
+	then
+	  return 1
+	fi
+
+	~/bin/${container}.run & > /dev/null 2>&1
+
+	sleep 2
+	disown
+
+    (( lmsContainer_pass++ ))
+ 
+	isRunning
+	[[ $? -eq 0 ]] || return $?
+
+	return 0
+}
+
+# =========================================================================================
+#
+#   processCommandLine
+#
+#   parameters:
+#		none
+#
+#	returns:
+#		0 = no error
+#		non-zero = error code
+#
+# =========================================================================================
+function processCommandLine()
+{
+	lmsCliParse
+	[[ $? -eq 0 ]] || return 1
+
+    local pString
+
+    for pString in "${cliKey[@]}"
+    do
+        case "${pString}" in
+
+            "name")
+                lmsContainer_name="${cliParam[$pString]}"
+                ;;
+
+            "quiet")
+                lmscli_optQuiet="${cliParam[$pString]}"
+                ;;
+
+            *)
+                [[ -z "${lmsContainer_name}" ]] && lmsContainer_name="${cliParam[$pString]}"
+                ;;
+        esac
+
+    done
+    
+	[[ -n "${lmsContainer_name}" ]] || return 2
+	
+	return 0
+}
+
+# =========================================================================================
+# =========================================================================================
+#
+#		Start Application Here
+#
+# =========================================================================================
+# =========================================================================================
+
+lmscli_optQuiet=0
+lmsContainer_pass=0
+lmsContainer_name=""
+
+processCommandLine
+[[ $? -eq 0 ]] ||
+ {
+    lmsconDisplay "processOptions failed: $?"
+    exit 1
+ }
+
+[[ -n "${lmsContainer_name}" ]] ||
+ {
+    lmsconDisplay "Missing container name"
+    exit 2
+ }
+
+lerr=0
+
+isRunning
+[[ $? -eq 0 ]] || 
+ {
+    lerr=$?
+    (( lerr+=2 ))
+
+    lmsconDisplay "Unable to start \"${lmsContainer_name}\""
+    exit lerr
+ }
+
+exit 0
+

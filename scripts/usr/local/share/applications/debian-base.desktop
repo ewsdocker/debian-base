@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Exec=/home/jay/.local/bin/debian-base.run
+Icon=/home/jay/.local/share/icons/hicolor/16x16/apps/default.png
+Type=Application
+Terminal=false
+GenericName=Debian-Base
+Name=Debian-Base
+StartupNotify=false
+Categories=Accessories

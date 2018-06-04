@@ -8,7 +8,7 @@
 # =========================================================================
 #
 # @author Jay Wheeler.
-# @version 3.0.7
+# @version 3.0.8
 # @copyright © 2017, 2018. EarthWalk Software.
 # @license Licensed under the GNU General Public License, GPL-3.0-or-later.
 # @package ewsdocker/debian-base
@@ -51,8 +51,20 @@ MAINTAINER Jay Wheeler <EarthWalkSoftware@gmail.com>
 ENV DEBIAN_FRONTEND noninteractive
 
 # =========================================================================
+#
+# set the LMS directories on the docker host
+#
+# =========================================================================
 
-ENV LMSBUILD_VERSION="3.0.7"
+ENV LMS_BASE="/usr/local"
+
+ENV LMS_BIN="${LMS_BASE}/bin/lms"
+ENV LMS_LIB="${LMS_BASE}/lib/lms"
+ENV LMS_SHARE="${LMS_BASE}/share/lms"
+
+# =========================================================================
+
+ENV LMSBUILD_VERSION="3.0.8"
 ENV LMSBUILD_NAME=debian-base 
 ENV LMSBUILD_DOCKER="ewsdocker/${LMSBUILD_NAME}:${LMSBUILD_VERSION}" 
 ENV LMSBUILD_PACKAGE="debian-9.4"
@@ -105,10 +117,20 @@ RUN dpkg-divert --local --rename --add /sbin/initctl \
 
 COPY scripts/. /
 
+RUN chmod 775 /usr/local/bin/*.* \
+ && chmod 775 /usr/bin/lms/setup \
+ && chmod 600 /usr/local/share/applications/debian-base.desktop \
+ && ln -s /usr/bin/lms/setup /usr/bin/lms-setup \
+ && ln -s /usr/bin/lms/version /usr/bin/lms-version
+
 # =========================================================================
+
+VOLUME /usrlocal
 
 ENV HOME /root
 WORKDIR /root
+
+# =========================================================================
 
 ENTRYPOINT ["/my_init", "--quiet"]
 CMD ["/bin/bash"]
