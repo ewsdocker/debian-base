@@ -1,10 +1,10 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=/home/jay/bin/docker-office-start.run
+Exec=/home/jay/bin/docker-deb-start-0.0.1 debian-base
 Icon=/home/jay/.config/docker/libreoffice/icons/libreoffice6.0-writer.svg
 Type=Application
 Terminal=false
-GenericName=LibreOffice
-Name=LibreOffice-6.0
+GenericName=Debian-Base
+Name=Debian-Base
 StartupNotify=false
-Categories=Office
+Categories=Programming
