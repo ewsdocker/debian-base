@@ -64,6 +64,9 @@ cp -r /usr/local/share/*   /usrlocal/share
 cp -r /usr/local/lib/lms/* /usrlocal/lib/lms
 cp    /usr/local/bin/*     /usrlocal/bin
 
+ls -la /usrlocal/bin
+ls -la /usrlocal/share
+
 echo "LMS_BASE=${LMS_BASE}" > /root/lms-base.conf
 chmod 755 /root/lms-base.conf
 
