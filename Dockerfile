@@ -122,7 +122,6 @@ RUN chmod 775 /usr/local/bin/*.* \
 # =========================================================================
 
 VOLUME /usrlocal
-
 ENV HOME /root
 WORKDIR /root
 
