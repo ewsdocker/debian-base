@@ -207,7 +207,7 @@ function lmsCliParse()
 
     for pString in "${cliBuffer[@]}"
     do
-        splitParameter "${pString}"
+        lmsSplitParameter "${pString}"
 		[[ $? -eq 0 ]] || return 1
     done
 

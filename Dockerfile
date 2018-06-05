@@ -58,10 +58,6 @@ ENV DEBIAN_FRONTEND noninteractive
 
 ENV LMS_BASE="/usr/local"
 
-ENV LMS_BIN="${LMS_BASE}/bin/lms"
-ENV LMS_LIB="${LMS_BASE}/lib/lms"
-ENV LMS_SHARE="${LMS_BASE}/share/lms"
-
 # =========================================================================
 
 ENV LMSBUILD_VERSION="3.0.8"

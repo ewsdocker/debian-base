@@ -45,6 +45,12 @@ declare    lmsContainer_pass=0
 # =========================================================================================
 # =========================================================================================
 
+source ${HOME}/.config/docker/lms-base.conf
+
+LMS_BIN="${LMS_BASE}/bin"
+LMS_LIB="${LMS_BASE}/lib/lms"
+LMS_SHARE="${LMS_BASE}/share/lms"
+
 source ${LMS_LIB}/lmsconCli-0.0.2.bash
 source ${LMS_LIB}/lmsconDisplay-0.0.1.bash
 
@@ -69,7 +75,7 @@ function getStatus()
 {
   local status="${1}"
 
-  lmsContainer_status=$(docker ps -a --filter name=${container} --filter status="${status}" )
+  lmsContainer_status=$(docker ps -a --filter name=${lmsContainer_name} --filter status="${status}" )
   [[ $? -eq 0 ]] || 
    {
      lmsconDisplay "docker ps failed."
@@ -107,7 +113,10 @@ function checkStatus()
 	getStatus "${pStatus}"
 	[[ $? -eq 0 ]] || return 1
 
-	if echo "${lmsContainer_status}" | grep -q "${pSearch}" ; then return 0
+	if echo "${lmsContainer_status}" | grep -q "${pSearch}"
+	then 
+	    return 0
+	fi
 
 	return 2
 }
@@ -123,52 +132,94 @@ function checkStatus()
 #      $pSearch = (string) Value to search for in $lmsContainer_status
 #
 #	returns:
-#      0 = status matched and search value was found
-#      1 = docker ps failed
-#      2 = status or search string did not match
+#      0 = running
+#      1 = doesn't exist or exec. error
+#      2 = no match
 #
 # =========================================================================================
 function isRunning()
 {
     checkStatus "running" "Up"
-    [[ $? -ne 2 ]] && return $?
+    [[ $? -ne 2 ]] && 
+     {
+     	[[ $? -eq 0 ]] &&
+     	 {
+ 			lmsconDisplay ""
+			lmsconDisplay "\"${lmsContainer_name}\" is already running."
+     	    return 0
+     	 }
+     	 
+     	return $?
+	 }
+
+	lmsconDisplay ""
+	lmsconDisplay "\"${lmsContainer_name}\" is not running."
 
     checkStatus "exited" "Exited"
     [[ $? -ne 2 ]] && 
      {
-         [[ $? -eq 0 ]] || return $?
-       
-         docker start ${lmsContainer_name}
          [[ $? -eq 0 ]] || return 1
+       
+		lmsconDisplay ""
+		lmsconDisplay "Starting container \"${lmsContainer_name}\""
+        docker start ${lmsContainer_name}
+        [[ $? -eq 0 ]] || 
+         {
+			lmsconDisplay ""
+			lmsconDisplay "Failed to start \"${lmsContainer_name}\""
+            return 1
+         }
 
-	     return 0
+		lmsconDisplay ""
+		lmsconDisplay "\"${lmsContainer_name}\" started."
+	    return 0
 	 }
 
 	checkStatus "created" "Created"
     [[ $? -ne 2 ]] && 
      {
-         [[ $? -eq 0 ]] || return $?
-       
-         docker start ${lmsContainer_name}
          [[ $? -eq 0 ]] || return 1
 
-	     return 0
+		lmsconDisplay ""
+		lmsconDisplay "Created container, now starting!"
+
+		docker start ${lmsContainer_name}
+        [[ $? -eq 0 ]] || return 1
+
+		lmsconDisplay ""
+		lmsconDisplay "Container \"${lmsContainer_name}\" started."
+	    return 0
 	 }
 
     [[ ${lmsContainer_pass} -eq 0 ]] || return 1
 
-	if [ -e "~/bin/${lmsContainer_name}.run" ]
+	if [ ! -e "${LMS_BIN}/${lmsContainer_name}" ]
 	then
-	  return 1
+		lmsconDisplay ""
+		lmsconDisplay "Unknown container \"${LMS_BIN}/${lmsContainer_name}\""
+	  	return 1
 	fi
 
-	~/bin/${container}.run & > /dev/null 2>&1
+	lmsconDisplay ""
+	lmsconDisplay "Creating a new container named \"${lmsContainer_name}\" using \"${LMS_BIN}/${lmsContainer_name}\""
 
-	sleep 2
+	${LMS_BIN}/${lmsContainer_name} & > /dev/null 2>&1
+
+	sleep 1
 	disown
 
     (( lmsContainer_pass++ ))
  
+ 	[[ ${lmsContainer} -gt 1 ]] &&
+ 	 {
+		lmsconDisplay ""
+		lmsconDisplay "Unable to create \"${lmsContainer_name}\""
+        return 1
+ 	 }
+
+	lmsconDisplay ""
+	lmsconDisplay "Checking that created container \"${lmsContainer_name}\" has started."
+
 	isRunning
 	[[ $? -eq 0 ]] || return $?
 
@@ -200,21 +251,22 @@ function processCommandLine()
 
             "name")
                 lmsContainer_name="${cliParam[$pString]}"
+
                 ;;
 
-            "quiet")
-                lmscli_optQuiet="${cliParam[$pString]}"
+            "verbose")
+                [[ "${cliParam[$pString]}" == "0" ]] && lmscli_optQuiet=1 || lmscli_optQuiet=0
+
                 ;;
 
             *)
-                [[ -z "${lmsContainer_name}" ]] && lmsContainer_name="${cliParam[$pString]}"
+                [[ -z "${lmsContainer_name}" ]] && lmsContainer_name="${pString}"
+
                 ;;
         esac
 
     done
-    
-	[[ -n "${lmsContainer_name}" ]] || return 2
-	
+
 	return 0
 }
 
@@ -226,23 +278,24 @@ function processCommandLine()
 # =========================================================================================
 # =========================================================================================
 
-lmscli_optQuiet=0
+lmscli_optQuiet=1
 lmsContainer_pass=0
 lmsContainer_name=""
 
 processCommandLine
 [[ $? -eq 0 ]] ||
  {
-    lmsconDisplay "processOptions failed: $?"
+    lmsconDisplay "processCommandLine failed: $?"
     exit 1
  }
 
-[[ -n "${lmsContainer_name}" ]] ||
+[[ -z "${lmsContainer_name}" ]] &&
  {
-    lmsconDisplay "Missing container name"
+    lmsconDisplay "Missing container name \"${lmsContainer_name}\""
     exit 2
  }
 
+lmsContainer_name="${lmsContainer_name}"
 lerr=0
 
 isRunning
@@ -251,8 +304,9 @@ isRunning
     lerr=$?
     (( lerr+=2 ))
 
+	lmsconDisplay ""
     lmsconDisplay "Unable to start \"${lmsContainer_name}\""
-    exit lerr
+    exit $lerr
  }
 
 exit 0
