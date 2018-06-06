@@ -55,6 +55,10 @@ lmsVersion
 #		environment variable in the cli parameters to start setup
 #
 # =========================================================================
+function rmDestFile 
+{
+    [[ -f "${1}" ]] && rm "${1}"
+}
 
 mkdir -p /usrlocal/share/lms
 mkdir -p /usrlocal/lib/lms
@@ -63,6 +67,16 @@ mkdir -p /usrlocal/bin
 cp -r /usr/local/share/*   /usrlocal/share
 cp -r /usr/local/lib/lms/* /usrlocal/lib/lms
 cp    /usr/local/bin/*     /usrlocal/bin
+
+cd /usr/local/bin
+
+for fname in *
+do
+    [[ -f "${fname}" ]] && rmDestFile "/usrlocal/bin/${fname}"
+    cp "${fname}" "/usrlocal/bin/${fname}"
+done
+
+chmod +x /usrlocal/bin/*
 
 echo "LMS_BASE=${LMS_BASE}" > /root/lms-base.conf
 chmod 755 /root/lms-base.conf
