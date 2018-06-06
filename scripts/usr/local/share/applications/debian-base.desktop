@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=/home/jay/bin/docker-deb-start-0.0.1 debian-base
+Exec=/home/jay/bin/docker-deb-start-0.0.1 debian-base-3.0.8
 Icon=/home/jay/.config/docker/libreoffice/icons/libreoffice6.0-writer.svg
 Type=Application
 Terminal=false
