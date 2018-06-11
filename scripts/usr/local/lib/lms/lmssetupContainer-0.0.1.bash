@@ -2,17 +2,17 @@
 #=========================================================================
 # =========================================================================
 #
-#	setup
+#	lmssetupContainer
 #	  Copy run scripts to /userbin.
 #
 # =========================================================================
 #
 # @author Jay Wheeler.
-# @version 0.0.2
+# @version 0.0.1
 # @copyright © 2018. EarthWalk Software.
 # @license Licensed under the GNU General Public License, GPL-3.0-or-later.
 # @package ewsdocker/debian-base
-# @subpackage setup
+# @subpackage lmssetupContainer
 #
 # =========================================================================
 #
@@ -38,29 +38,61 @@
 # =========================================================================
 # =========================================================================
 
-. /usr/local/lib/lms/lmsconCli-0.0.2.bash
-. /usr/local/lib/lms/lmsVersion-0.0.1.bash
-. /usr/local/lib/lms/lmssetupContainer-0.0.1.bash
+# =========================================================================
+#
+#   rmDestFile
+#
+#		Remove destination file copy, if it exists
+#
+#	parameters:
+#		fname = name of the file
+#
+#   returns:
+#		0 = no error
+#
+# =========================================================================
+function rmDestFile 
+{
+    [[ -f "${1}" ]] && rm "${1}"
+
+    return 0
+}
 
 # =========================================================================
 #
-#    Display the version stack
+#   setupContainer
+#
+#		Setup required files in the proper folders
+#
+#	parameters:
+#		none
+#
+#   returns:
+#		0 = no error
 #
 # =========================================================================
+function setupContainer()
+{
+	mkdir -p /usrlocal/share/lms
+	mkdir -p /usrlocal/lib/lms
+	mkdir -p /usrlocal/bin
 
-lmsVersion
+	cp -r /usr/local/share/*      /usrlocal/share
+	cp -r /usr/local/lib/lms/*    /usrlocal/lib/lms
 
-# =========================================================================
-#
-#    copy /usr/local subdirectories to the directory specified in LMS_BASE
-#		environment variable in the cli parameters to start setup
-#
-# =========================================================================
+	cd /usr/local/bin
 
-setupContainer
+	for fname in debian-*
+	do
+    	[[ -f "${fname}" ]] && rmDestFile "/usrlocal/bin/${fname}"
+    	cp "${fname}" "/usrlocal/bin/${fname}"
+	done
 
-echo
-echo "Internal setup completed."
-echo
+	chmod +x /usrlocal/bin/*
 
-exit 0
+	echo "LMS_BASE=${LMS_BASE}" > /root/lms-base.conf
+	chmod 755 /root/lms-base.conf
+
+    return 0
+}
+
