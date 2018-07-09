@@ -8,7 +8,7 @@
 # =========================================================================
 #
 # @author Jay Wheeler.
-# @version 0.0.1
+# @version 0.0.2
 # @copyright © 2018. EarthWalk Software.
 # @license Licensed under the GNU General Public License, GPL-3.0-or-later.
 # @package ewsdocker/debian-base
@@ -82,7 +82,7 @@ function setupContainer()
 
 	cd /usr/local/bin
 
-	for fname in debian-*
+	for fname in *
 	do
     	[[ -f "${fname}" ]] && rmDestFile "/usrlocal/bin/${fname}"
     	cp "${fname}" "/usrlocal/bin/${fname}"

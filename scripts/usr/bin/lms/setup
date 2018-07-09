@@ -8,7 +8,7 @@
 # =========================================================================
 #
 # @author Jay Wheeler.
-# @version 0.0.2
+# @version 0.0.3
 # @copyright © 2018. EarthWalk Software.
 # @license Licensed under the GNU General Public License, GPL-3.0-or-later.
 # @package ewsdocker/debian-base
@@ -40,7 +40,7 @@
 
 . /usr/local/lib/lms/lmsconCli-0.0.2.bash
 . /usr/local/lib/lms/lmsVersion-0.0.1.bash
-. /usr/local/lib/lms/lmssetupContainer-0.0.1.bash
+. /usr/local/lib/lms/lmssetupContainer-0.0.2.bash
 
 # =========================================================================
 #

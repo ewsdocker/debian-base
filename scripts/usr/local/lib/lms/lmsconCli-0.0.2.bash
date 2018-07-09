@@ -126,7 +126,7 @@ function lmsStrExplode()
 	local string="${1}"
 	local separator=${2:-" "}
 
-	OIFS="$IFS"
+	local OIFS="$IFS"
 	IFS=$separator
 
 	    read -a ${3} <<< "${string}"
