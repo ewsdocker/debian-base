@@ -90,8 +90,8 @@ function setupContainer()
 
 	chmod +x /usrlocal/bin/*
 
-	echo "LMS_BASE=${LMS_BASE}" > /root/lms-base.conf
-	chmod 755 /root/lms-base.conf
+	echo "LMS_BASE=${LMS_BASE}" > /conf/lms-base.conf
+	chmod 755 /conf/lms-base.conf
 
     return 0
 }
