@@ -85,7 +85,7 @@ function setupContainer()
 	for fname in *
 	do
     	[[ -f "${fname}" ]] && rmDestFile "/usrlocal/bin/${fname}"
-    	cp "${fname}" "/usrlocal/bin/${fname}"
+    	cp -r "${fname}" "/usrlocal/bin/${fname}"
 	done
 
 	chmod +x /usrlocal/bin/*
