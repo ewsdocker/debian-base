@@ -89,14 +89,11 @@ function setupContainer()
     	    if ! [ -L "/usrlocal/bin/${fname}" ]
     	    then 
     	        rmDestFile "/usrlocal/bin/${fname}"
-    	        cp -r "${fname}" "/usrlocal/bin/${fname}"
+    	        cp "${fname}" "/usrlocal/bin/${fname}"
     	    fi
     	 }
     	
 	done
-
-	chmod +x /usrlocal/bin/debian-*
-	chmod +x /usrlocal/bin/docker*
 
 	echo "LMS_BASE=${LMS_BASE}" > /conf/lms-base.conf
 	chmod 755 /conf/lms-base.conf
