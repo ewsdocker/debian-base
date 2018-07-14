@@ -40,26 +40,6 @@
 
 # =========================================================================
 #
-#   rmDestFile
-#
-#		Remove destination file copy, if it exists
-#
-#	parameters:
-#		fname = name of the file
-#
-#   returns:
-#		0 = no error
-#
-# =========================================================================
-function rmDestFile 
-{
-    [[ -f "${1}" ]] && rm "${1}"
-
-    return 0
-}
-
-# =========================================================================
-#
 #   setupContainer
 #
 #		Setup required files in the proper folders
@@ -84,15 +64,17 @@ function setupContainer()
 
 	for fname in *
 	do
-    	[[ -f "/usrlocal/bin/${fname}" ]] && 
-    	 {
-    	    if ! [ -L "/usrlocal/bin/${fname}" ]
-    	    then 
-    	        rmDestFile "/usrlocal/bin/${fname}"
-    	        cp "${fname}" "/usrlocal/bin/${fname}"
+	    if ! [ -d "${fname}" ]
+	    then
+    		if ! [ -L "${fname}" ] 
+    		then
+    		    if [ -f "/usrlocal/bin/${fname}" ]
+    		    then
+    	            rm "/usrlocal/bin/${fname}"
+    	        fi
+                cp "${fname}" "/usrlocal/bin"
     	    fi
-    	 }
-    	
+        fi
 	done
 
 	echo "LMS_BASE=${LMS_BASE}" > /conf/lms-base.conf
