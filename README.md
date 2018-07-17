@@ -2,6 +2,12 @@
 **ewsdocker/debian-base** is a version of the *nimmis/ubuntu* docker image modified for use with *Debian 9*.  It adds several system utilities and libraries that are nominally required to properly utilize the *library/debian* docker image, and adds system initialization and supervisor functions for better control.  
 ____  
 
+## NOTE
+
+**ewsdocker/debian-base** is designed to be used on a Linux system configured to support **Docker** _user namespaces_.  Refer to [ewsdocker Containers and Docker User Namespaces](https://github.com/ewsdocker/ewsdocker.github.io/wiki/UserNS-Overview) for an overview and additional information.  
+
+____  
+
 ## ewsdocker/debian-base Wiki  
 
 Please visit our [ewsdocker/debian-base Wiki](https://github.com/ewsdocker/debian-base/wiki) for complete documentation of this docker image.  
