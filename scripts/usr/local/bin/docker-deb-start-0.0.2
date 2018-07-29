@@ -8,7 +8,7 @@
 # =========================================================================
 #
 # @author Jay Wheeler.
-# @version 0.0.1
+# @version 0.0.2
 # @copyright © 2018. EarthWalk Software.
 # @license Licensed under the GNU General Public License, GPL-3.0-or-later.
 # @package ewsdocker/debian-base
@@ -48,16 +48,27 @@ declare    lmsContainer_name=""
 declare    lmsContainer_status=""
 declare    lmsContainer_pass=0
 
+declare -a lmsContainer_fields=()
+declare -a cliBuffer=( "${@}" )
+
 # =========================================================================================
 # =========================================================================================
 
-source ${HOME}/.config/docker/lms-base.conf
+[[ ${#cliBuffer} -eq 0 ]] && 
+ {
+    echo "Missing container name \"${lmsContainer_name}\""
+    exit 1
+ }
+
+lmsContainer="${cliBuffer[0]}"
+lmsContainer_name="${lmsContainer//:/-}"
+
+source ${HOME}/.config/docker/${lmsContainer_name}/lms-base.conf
 
 LMS_BIN="${LMS_BASE}/bin"
 LMS_LIB="${LMS_BASE}/lib/lms"
 LMS_SHARE="${LMS_BASE}/share/lms"
 
-source ${LMS_LIB}/lmsconCli-0.0.2.bash
 source ${LMS_LIB}/lmsconDisplay-0.0.1.bash
 
 # =========================================================================================
@@ -216,7 +227,7 @@ function isRunning()
 
     (( lmsContainer_pass++ ))
  
- 	[[ ${lmsContainer} -gt 1 ]] &&
+ 	[[ ${lmsContainer_pass} -gt 1 ]] &&
  	 {
 		lmsconDisplay ""
 		lmsconDisplay "Unable to create \"${lmsContainer_name}\""
@@ -227,53 +238,7 @@ function isRunning()
 	lmsconDisplay "Checking that created container \"${lmsContainer_name}\" has started."
 
 	isRunning
-	[[ $? -eq 0 ]] || return $?
-
-	return 0
-}
-
-# =========================================================================================
-#
-#   processCommandLine
-#
-#   parameters:
-#		none
-#
-#	returns:
-#		0 = no error
-#		non-zero = error code
-#
-# =========================================================================================
-function processCommandLine()
-{
-	lmsCliParse
-	[[ $? -eq 0 ]] || return 1
-
-    local pString
-
-    for pString in "${cliKey[@]}"
-    do
-        case "${pString}" in
-
-            "name")
-                lmsContainer_name="${cliParam[$pString]}"
-
-                ;;
-
-            "verbose")
-                [[ "${cliParam[$pString]}" == "0" ]] && lmscli_optQuiet=1 || lmscli_optQuiet=0
-
-                ;;
-
-            *)
-                [[ -z "${lmsContainer_name}" ]] && lmsContainer_name="${pString}"
-
-                ;;
-        esac
-
-    done
-
-	return 0
+	return $?
 }
 
 # =========================================================================================
@@ -286,22 +251,6 @@ function processCommandLine()
 
 lmscli_optQuiet=1
 lmsContainer_pass=0
-lmsContainer_name=""
-
-processCommandLine
-[[ $? -eq 0 ]] ||
- {
-    lmsconDisplay "processCommandLine failed: $?"
-    exit 1
- }
-
-[[ -z "${lmsContainer_name}" ]] &&
- {
-    lmsconDisplay "Missing container name \"${lmsContainer_name}\""
-    exit 2
- }
-
-lmsContainer_name="${lmsContainer_name}"
 lerr=0
 
 isRunning

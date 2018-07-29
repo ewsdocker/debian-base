@@ -1,10 +1,10 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=/home/jay/.local/bin/docker-deb-start-0.0.1 debian-base-3.0.9
+Exec=/home/jay/.local/bin/docker-deb-start-0.0.2 debian-base:9.5.0
 Icon=/home/jay/.local/share/icons/default.png
 Type=Application
-Terminal=true
+Terminal=false
 GenericName=Debian-Base
 Name=Debian-Base
 StartupNotify=false
-Categories=Other
+Categories=Development

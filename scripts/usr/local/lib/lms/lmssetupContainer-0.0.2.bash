@@ -1,5 +1,5 @@
 #!/bin/bash
-#=========================================================================
+# =========================================================================
 # =========================================================================
 #
 #	lmssetupContainer
@@ -77,8 +77,12 @@ function setupContainer()
         fi
 	done
 
-	echo "LMS_BASE=${LMS_BASE}" > /conf/lms-base.conf
-	chmod 755 /conf/lms-base.conf
+	lmsContainer="/conf/${LMSBUILD_NAME}-${LMSBUILD_VERSION}"
+
+    mkdir -p "${lmsContainer}"
+
+	echo "LMS_BASE=${LMS_BASE}" > "${lmsContainer}/lms-base.conf"
+	chmod 755 "${lmsContainer}/lms-base.conf"
 
     return 0
 }
