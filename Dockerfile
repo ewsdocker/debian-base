@@ -8,7 +8,7 @@
 # =========================================================================
 #
 # @author Jay Wheeler.
-# @version 9.5.0
+# @version 9.5.1
 # @copyright © 2017, 2018. EarthWalk Software.
 # @license Licensed under the GNU General Public License, GPL-3.0-or-later.
 # @package ewsdocker/debian-base
@@ -60,7 +60,7 @@ ENV LMS_BASE="/usr/local"
 
 # =========================================================================
 
-ENV LMSBUILD_VERSION="9.5.0"
+ENV LMSBUILD_VERSION="9.5.1"
 ENV LMSBUILD_NAME=debian-base 
 ENV LMSBUILD_REPO=ewsdocker
 ENV LMSBUILD_REGISTRY=""
@@ -118,7 +118,7 @@ COPY scripts/. /
 
 RUN chmod 775 /usr/local/bin/*.* \
  && chmod 775 /usr/bin/lms/setup \
- && chmod 600 /usr/local/share/applications/debian-base.desktop \
+ && chmod 600 /usr/local/share/applications/debian-base-9.5.1.desktop \
  && ln -s /usr/bin/lms/setup /usr/bin/lms-setup \
  && ln -s /usr/bin/lms/version /usr/bin/lms-version
 
