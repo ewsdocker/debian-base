@@ -41,7 +41,7 @@
 docker run -it \
            --rm \
            -v /etc/localtime:/etc/localtime:ro \
-           -v ${HOME}/.config/docker/base:/root \
-           -v ${HOME}:/user \
+           -v ${HOME}/workspace-base-9.5.1:/workspace \
+           -v ${HOME}/.config/docker/debian-base-9.5.1:/root \
            --name=debian-base-9.5.1 \
        ewsdocker/debian-base:9.5.1

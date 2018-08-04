@@ -1,53 +1,113 @@
-## debian-base
-**ewsdocker/debian-base** is a version of the *nimmis/ubuntu* docker image modified for use with *Debian 9*.  It adds several system utilities and libraries that are nominally required to properly utilize the *library/debian* docker image, and adds system initialization and supervisor functions for better control.  
-____  
+**ewsdocker/debian-base** is a version of the [nimmis/docker-ubuntu](https://github.com/nimmis/docker-ubuntu) docker image modified for use with **Debian 9**.  It adds several system utilities and libraries that are nominally required to properly utilize the **library/debian** docker image, and adds system initialization and supervisor functions for better control.  
 
-## NOTE
+______  
 
-**ewsdocker/debian-base** is designed to be used on a Linux system configured to support **Docker** _user namespaces_.  Refer to [ewsdocker Containers and Docker User Namespaces](https://github.com/ewsdocker/ewsdocker.github.io/wiki/UserNS-Overview) for an overview and additional information.  
+A pre-made docker image of **ewsdocker/debian-base** is available from [ewsdocker/debian-base](https://hub.docker.com/r/ewsdocker/debian-base/) at [Docker Hub](https://hub.docker.com).  
+______  
 
-____  
 
-## ewsdocker/debian-base Wiki  
+**Installing ewsdocker/debian-base**  
 
-Please visit our [ewsdocker/debian-base Wiki](https://github.com/ewsdocker/debian-base/wiki) for complete documentation of this docker image.  
-____  
+The following scripts will download the the selected **ewsdocker/debian-base** image, create a container, setup and populate the directory structures, create the run-time scripts, and install the application's desktop file(s).  
 
-### About Docker Versions  
+The <i>default</i> values will install all directories and contents in the <b>docker host</b> user's home directory (refer to <a href="#mapping">Mapping docker host resources to the docker container</a>, below).  
 
-Find out all that you need to know about the docker Tags, and the version of **ewsdocker/debian-base** represented, at [Docker Tags](https://github.com/ewsdocker/debian-base/wiki/DockerTags).  
-_____________________  
-
-**docker pull** will pull the **latest** image by default.  Other versions are available, as follows:
-
-This **edge** image is based on the GitHub **master** source, which is the development version, and quite possibly **unstable**.  
-
-The **stable** version is the most stable version of the most recent **Debian** version.  It may (most likely) not be the newest GitHub version.  
-
-NOTE: If the _New Version_ version number is not in the **Tags**, the **latest** tag is still under test.  Testing will be complete when the _New Version_ tag exists.
-
-Other Docker versions (or tags) can be selected on the Docker [Tags](https://hub.docker.com/r/ewsdocker/debian-base/tags/) page.  
-
-An explanation of the [Docker Tags](https://github.com/ewsdocker/debian-base/wiki/DockerTags) is available on the [ewsdocker/debian-base Wiki](https://github.com/ewsdocker/debian-base/wiki).
+**ewsdocker/debian-base:9.5.0**
+  
+    docker run --rm \
+               -v ${HOME}/bin:/userbin \
+               -v ${HOME}/.local:/usrlocal \
+               -e LMS_BASE="${HOME}/.local" \
+               -v ${HOME}/.config/docker:/conf \
+               -v ${HOME}/.config/docker/debian-base-9.5.0:/root \
+               --name=debian-base-9.5.0 \
+           ewsdocker/debian-base:9.5.0 lms-setup  
 
 ____  
 
-**Copyright © 2018. EarthWalk Software.**  
-**Licensed under the GNU General Public License, GPL-3.0-or-later.**  
+**Running the installed scripts**
 
-This file is part of **ewsdocker/debian-base**.  
+After running the above command script, and using the settings indicated, the docker host directories, mapped as shown in the above tables, will be configured as follows:
+<ol>
+ <li>the executable scripts have been copied to <b>~/bin</b>;</li>
+ <li>the application desktop file(s) have been copied to <b>~/.local/share/applications</b>, and are availablie in any <i>task bar</i> menu;</li>
+ <li>the associated <b>debian-base-"version"</b> executable script (shown below) will be found in <b>~/.local/bin</b>, and <i>should</i> be customized with proper local volume names;</li>
+</ol> 
 
-**ewsdocker/debian-base** is free software: you can redistribute 
-it and/or modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation, either version 3 of the 
-License, or (at your option) any later version.  
-
-**ewsdocker/debian-base** is distributed in the hope that it will 
-be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
-of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.  
-
-You should have received a copy of the GNU General Public License
-along with **ewsdocker/debian-base**.  If not, see 
-<http://www.gnu.org/licenses/>.  
 ____  
+
+**Executable scripts**  
+
+**ewsdocker/debian-base:9.5.0**  
+  
+    docker run -d \
+           --rm \
+           -v /etc/localtime:/etc/localtime:ro \
+           -v ${HOME}/workspace-base-9.5.0:/workspace \
+           -v ${HOME}/.config/docker/debian-base-9.5.0:/root \
+           --name=debian-base-9.5.0 \
+       ewsdocker/debian-base:9.5.0  
+
+____  
+
+
+**Simple tests**  
+
+**Test 1**  
+Copy the docker command above (**Creating a container**) and paste it into a docker host command line to create a temporary docker container named *base*.  The docker container will display it's startup status, something like this:  
+
+    docker exec -it -t debian-base-9.5.0 /bin/bash 
+
+
+Press the Ctrl/C combination and the container should exit, something similar to  
+
+    *** Shutting down supervisor daemon (PID 6)...  
+    sh: 1: ps: not found  
+    *** Killing all processes...  
+
+______  
+
+**locale**  
+
+The following locale is automatically created in the image:  
+
+    locale-gen en_US
+    update-locale LANG=C.UTF-8 LC_MESSAGES=POSIX  
+  
+This setting may be changed in the Dockerfile (using the RUN command) when building a new container from the **ewsdocker/debian-base** image. 
+
+------
+
+**Packages**  
+
+Among the additional packages are   
+
+  - **apt**
+  - **apt-transport-https**  
+  - **cron** 
+  - **curl**
+  - **git**
+  - **less**
+  - **libcurl3-gnutls**
+  - **locales**
+  - **logrotate** 
+  - **lsb_release**
+  - **nano** 
+  - **patch** 
+  - **psmisc**
+  - **software-properties-common**
+  - **sudo** 
+  - **supervisor**
+  - **syslog-ng** 
+  - **syslog-ng-core** 
+  - **unzip** 
+  - **wget** 
+  - **zip**
+
+______  
+
+**Documentation**  
+
+Documentation for this docker image is provided by the original [nimmis/docker-ubuntu](https://github.com/nimmis/docker-ubuntu) docker image documentation at https://github.com/nimmis/docker-ubuntu.  
+
+When following the narrative, replace [nimmis/docker-ubuntu](https://github.com/nimmis/docker-ubuntu) with **ewsdocker/debian-base**, and **ubuntu** with **debian**.  The provided functions and utilities are identical to the original image, except that they are being run under **Debian**.  
