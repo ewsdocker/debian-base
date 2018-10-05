@@ -45,6 +45,15 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # =========================================================================
 #
+# Global options
+#
+# =========================================================================
+
+ENV LMSOPT_QUIET=1
+ENV LMSOPT_TIMEOUT=30
+
+# =========================================================================
+#
 # set the LMS directories on the docker host
 #
 # =========================================================================
@@ -73,6 +82,7 @@ RUN dpkg-divert --local --rename --add /sbin/initctl \
  && apt-get -y install \
        apt \
        apt-transport-https \
+       bash-completion \
        cron \
        curl \
        git \

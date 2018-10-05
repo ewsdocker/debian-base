@@ -166,7 +166,7 @@ function isRunning()
      	    return 0
      	 }
      	 
-     	return $?
+     	return 1
 	 }
 
 	lmsconDisplay ""
@@ -208,8 +208,15 @@ function isRunning()
 	    return 0
 	 }
 
-    [[ ${lmsContainer_pass} -eq 0 ]] || return 1
+    [[ ${lmsContainer_pass} -eq 0 ]] || 
+ 	 {
+		lmsconDisplay ""
+		lmsconDisplay "Unable to create \"${lmsContainer_name}\""
+        return 1
+ 	 }
 
+    (( lmsContainer_pass++ ))
+ 
 	if [ ! -e "${LMS_BIN}/${lmsContainer_name}" ]
 	then
 		lmsconDisplay ""
@@ -224,15 +231,6 @@ function isRunning()
 
 	sleep 1
 	disown
-
-    (( lmsContainer_pass++ ))
- 
- 	[[ ${lmsContainer_pass} -gt 1 ]] &&
- 	 {
-		lmsconDisplay ""
-		lmsconDisplay "Unable to create \"${lmsContainer_name}\""
-        return 1
- 	 }
 
 	lmsconDisplay ""
 	lmsconDisplay "Checking that created container \"${lmsContainer_name}\" has started."
