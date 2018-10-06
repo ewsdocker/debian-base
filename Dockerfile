@@ -8,7 +8,7 @@
 # =========================================================================
 #
 # @author Jay Wheeler.
-# @version 9.5.3
+# @version 9.5.4
 # @copyright © 2017, 2018. EarthWalk Software.
 # @license Licensed under the GNU General Public License, GPL-3.0-or-later.
 # @package ewsdocker/debian-base
@@ -62,7 +62,7 @@ ENV LMS_BASE="/usr/local"
 
 # =========================================================================
 
-ENV LMSBUILD_VERSION="9.5.3"
+ENV LMSBUILD_VERSION="9.5.4"
 ENV LMSBUILD_NAME=debian-base 
 ENV LMSBUILD_REPO=ewsdocker
 ENV LMSBUILD_REGISTRY=""
@@ -105,6 +105,7 @@ RUN dpkg-divert --local --rename --add /sbin/initctl \
        wget \
        zip \
  && apt-get -y dist-upgrade \
+ && apt-get clean all \
  && locale-gen en_US \
  && update-locale LANG=C.UTF-8 LC_MESSAGES=POSIX \
  && mkdir -p /etc/workaround-docker-2267/ \

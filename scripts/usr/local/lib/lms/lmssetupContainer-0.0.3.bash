@@ -2,17 +2,17 @@
 # =========================================================================
 # =========================================================================
 #
-#	setup
-#	  Copy run scripts to local host interface.
+#	lmssetupContainer
+#	  Copy run scripts to /userbin.
 #
 # =========================================================================
 #
 # @author Jay Wheeler.
-# @version 0.0.4
+# @version 0.0.3
 # @copyright © 2018. EarthWalk Software.
 # @license Licensed under the GNU General Public License, GPL-3.0-or-later.
 # @package ewsdocker/debian-base
-# @subpackage setup
+# @subpackage lmssetupContainer
 #
 # =========================================================================
 #
@@ -38,33 +38,53 @@
 # =========================================================================
 # =========================================================================
 
-. /usr/local/lib/lms/lmsconCli-0.0.2.bash
-. /usr/local/lib/lms/lmsVersion-0.0.1.bash
-. /usr/local/lib/lms/lmssetupContainer-0.0.3.bash
-
 # =========================================================================
 #
-#    Display the version stack
+#   setupContainer
+#
+#		Setup required files in the proper folders
+#
+#	parameters:
+#		none
+#
+#   returns:
+#		0 = no error
 #
 # =========================================================================
+function setupContainer()
+{
+	mkdir -p /usrlocal/share/lms
+	mkdir -p /usrlocal/lib/lms
+	mkdir -p /usrlocal/bin
 
-echo
-echo "Installing \"${LMSBUILD_DOCKER}\""
-echo
+	cp -r /usr/local/share/*      /usrlocal/share
+	cp -r /usr/local/lib/lms/*    /usrlocal/lib/lms
 
-lmsVersion
+	cd /usr/local/bin
 
-# =========================================================================
-#
-#    copy /usr/local subdirectories to the directory specified in LMS_BASE
-#		environment variable in the cli parameters to start setup
-#
-# =========================================================================
+	for fname in *
+	do
+	    if ! [ -d "${fname}" ]
+	    then
+    		if ! [ -L "${fname}" ] 
+    		then
+    		    if [ -f "/usrlocal/bin/${fname}" ]
+    		    then
+    	            rm "/usrlocal/bin/${fname}"
+    	        fi
+                cp "${fname}" "/usrlocal/bin"
+    	    fi
+        fi
+	done
 
-setupContainer
+	lmsContainer="/conf/${LMSBUILD_NAME}"
+	[[ -n "${LMSBUILD_VERSION}" ]] && lmsContainer="${lmsContainer}-${LMSBUILD_VERSION}"
 
-echo
-echo "Internal setup completed."
-echo
+    mkdir -p "${lmsContainer}"
 
-exit 0
+	echo "LMS_BASE=${LMS_BASE}" > "${lmsContainer}/lms-base.conf"
+	chmod 755 "${lmsContainer}/lms-base.conf"
+
+    return 0
+}
+
