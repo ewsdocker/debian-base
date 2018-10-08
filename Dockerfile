@@ -122,7 +122,6 @@ COPY scripts/. /
 
 RUN chmod 775 /usr/local/bin/*.* \
  && chmod 775 /usr/bin/lms/setup \
- && chmod 600 /usr/local/share/applications/${LMSBUILD_NAME}-${LMSBUILD_VERSION}.desktop \
  && ln -s /usr/bin/lms/setup /usr/bin/lms-setup \
  && ln -s /usr/bin/lms/version /usr/bin/lms-version
 
