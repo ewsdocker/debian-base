@@ -77,9 +77,7 @@ function setupContainer()
         fi
 	done
 
-	lmsContainer="/conf/${LMSBUILD_NAME}"
-	[[ -n "${LMSBUILD_VERSION}" ]] && lmsContainer="${lmsContainer}-${LMSBUILD_VERSION}"
-
+	lmsContainer="/conf/${LMSBUILD_NAME}-${LMSBUILD_VERSION}"
     mkdir -p "${lmsContainer}"
 
 	echo "LMS_BASE=${LMS_BASE}" > "${lmsContainer}/lms-base.conf"
