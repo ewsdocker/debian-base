@@ -1,4 +1,4 @@
-### ewsdocker/debian-base:9.5.4
+### ewsdocker/debian-base:9.5.5
 
 **ewsdocker/debian-base** is a version of the [nimmis/docker-ubuntu](https://github.com/nimmis/docker-ubuntu) docker image modified for use with **Debian 9**.  It adds several system utilities and libraries that are nominally required to properly utilize the **library/debian** docker image, and adds system initialization and supervisor functions for better control.  
 
@@ -10,20 +10,20 @@ ______
 
 **Installing ewsdocker/debian-base**  
 
-The following scripts will download the the selected **ewsdocker/debian-base** image, create a container, setup and populate the directory structures, create the run-time scripts, and install the application's desktop file(s).  
+The following scripts will download the the selected **ewsdocker/debian-base** image, create a container, setup and populate the directory structures, and create the run-time scripts.  
 
 The <i>default</i> values will install all directories and contents in the <b>docker host</b> user's home directory (refer to <a href="#mapping">Mapping docker host resources to the docker container</a>, below).  
 
-**ewsdocker/debian-base:9.5.4**
+**ewsdocker/debian-base:9.5.5**
   
     docker run --rm \
                -v ${HOME}/bin:/userbin \
                -v ${HOME}/.local:/usrlocal \
                -e LMS_BASE="${HOME}/.local" \
                -v ${HOME}/.config/docker:/conf \
-               -v ${HOME}/.config/docker/debian-base-9.5.4:/root \
-               --name=debian-base-9.5.4 \
-           ewsdocker/debian-base:9.5.4 lms-setup  
+               -v ${HOME}/.config/docker/debian-base-9.5.5:/root \
+               --name=debian-base-9.5.5 \
+           ewsdocker/debian-base:9.5.5 lms-setup  
 
 ____  
 
@@ -39,15 +39,15 @@ ____
 
 **Execution scripts**  
 
-**ewsdocker/debian-base:9.5.4**  
+**ewsdocker/debian-base:9.5.5**  
   
     docker run -d \
            --rm \
            -v /etc/localtime:/etc/localtime:ro \
-           -v ${HOME}/workspace-base-9.5.4:/workspace \
-           -v ${HOME}/.config/docker/debian-base-9.5.4:/root \
-           --name=debian-base-9.5.4 \
-       ewsdocker/debian-base:9.5.4  
+           -v ${HOME}/workspace-base-9.5.5:/workspace \
+           -v ${HOME}/.config/docker/debian-base-9.5.5:/root \
+           --name=debian-base-9.5.5 \
+       ewsdocker/debian-base:9.5.5  
 
 ____  
 
@@ -57,7 +57,7 @@ ____
 **Test 1**  
 Copy the docker command above (**Creating a container**) and paste it into a docker host command line to create a temporary docker container named *base*.  The docker container will display it's startup status, something like this:  
 
-    docker exec -it -t debian-base-9.5.4 /bin/bash 
+    docker exec -it -t debian-base-9.5.5 /bin/bash 
 
 
 Press the Ctrl/C combination and the container should exit, something similar to  
