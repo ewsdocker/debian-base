@@ -37,7 +37,30 @@
 #
 # =========================================================================
 # =========================================================================
-
+#
+#	A simple state machine based on stately binary functions.  Each function
+#		- processes a single state and 
+#		- returns a binary result (0 = true, 1 = false)
+#
+#	The state machine engine then selects the next state based on the
+#	returned result of the current state, and moves on to process the
+#	next state.
+#
+# =========================================================================
+#
+#	state	function		true	false
+#	-----	---------------	----	-----
+#
+#	  0		initProcessor	  1		  7
+#	  1		getContainer	  3		  2
+#	  2		runContainer	  5		  7
+#	  3		checkRunning	  6		  4
+#	  4		startContainer	  5		  7
+#	  5		waitEvent		  6		  7
+#	  6		(exit - normal)	  -		  -
+#	  7		(exit - error)	  -		  -
+#
+# =========================================================================
 # =========================================================================
 #
 #	Runs in docker host system, NOT in the container!
@@ -89,18 +112,26 @@ declare    event_exiting=1
  {
 	container_error=${error_template}
 
-    echo "Missing container name \"${container_name}\""
+    echo "Missing container name"
     exit ${container_error}
  }
 
-container_image="${cliBuffer[0]}"
-#container_name="${container_image//:/-}"
+container_name="${cliBuffer[0]}"
 
-lmsStrExplode $container_image ":" "names"
-[[ ${#names[@]} -ne 2 ]] && names[1]="latest"
-$container_name="${names[0]}-${names[1]}"
+# =========================================================================================
 
-source ${HOME}/.config/docker/${container_name}/lms-base.conf
+declare -a names
+
+OIFS="$IFS"
+IFS=":"
+    read -a names <<< "${cliBuffer[0]}"
+IFS="$OIFS"
+
+[[ ${#names[@]} -eq 2 ]] && container_image="${names[0]}-${names[1]}" || container_image="${names[0]}-latest"
+
+source ${HOME}/.config/docker/${container_image}/lms-base.conf
+
+# =========================================================================================
 
 LMS_BIN="${LMS_BASE}/bin"
 LMS_LIB="${LMS_BASE}/lib/lms"
@@ -168,7 +199,10 @@ function getContainer()
 	local -a aStatus=()
 
 	local    oifs=$IFS
-	IFS=$'\n' read -rd '' -a aStatus <<<"$(docker container ls -a --filter name=${container_name} )"
+	IFS=$'\n' 
+
+		read -rd '' -a aStatus <<<"$(docker container ls -a --filter name=${container_image} )"
+
 	IFS=${oifs}
 
 	[[ ${#aStatus[@]} -lt 2 ]] &&
@@ -306,7 +340,7 @@ function runContainer()
 # =========================================================================================
 function startContainer()
 {
-    docker start ${container_name}
+    docker start ${container_image}
     [[ $? -eq 0 ]] && 
      {
 	    lmsconDisplay "startContainer : true"
