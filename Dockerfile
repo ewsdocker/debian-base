@@ -8,7 +8,7 @@
 # =========================================================================
 #
 # @author Jay Wheeler.
-# @version 9.5.5
+# @version 9.5.6
 # @copyright © 2017, 2018. EarthWalk Software.
 # @license Licensed under the GNU General Public License, GPL-3.0-or-later.
 # @package ewsdocker/debian-base
@@ -39,7 +39,7 @@
 # =========================================================================
 FROM debian:9.5
 
-MAINTAINER Jay Wheeler <EarthWalkSoftware@gmail.com>
+MAINTAINER Jay Wheeler <ewsdocker@gmail.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -62,7 +62,7 @@ ENV LMS_BASE="/usr/local"
 
 # =========================================================================
 
-ENV LMSBUILD_VERSION="9.5.5"
+ENV LMSBUILD_VERSION="9.5.6"
 ENV LMSBUILD_NAME=debian-base 
 ENV LMSBUILD_REPO=ewsdocker
 ENV LMSBUILD_REGISTRY=""
@@ -78,9 +78,8 @@ RUN dpkg-divert --local --rename --add /sbin/initctl \
  && echo 'APT::Install-Suggests 0;' >> /etc/apt/apt.conf.d/01norecommends \
  && sed -i 's/^#\s*\(deb.*multiverse\)$/\1/g' /etc/apt/sources.list \
  && apt-get -y update \
- && apt-get -y upgrade \ 
+ && apt-get -y upgrade \
  && apt-get -y install \
-       apt \
        apt-transport-https \
        bash-completion \
        cron \

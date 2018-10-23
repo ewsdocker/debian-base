@@ -8,7 +8,7 @@
 # =========================================================================
 #
 # @author Jay Wheeler.
-# @version 0.0.4
+# @version 0.0.5
 # @copyright © 2018. EarthWalk Software.
 # @license Licensed under the GNU General Public License, GPL-3.0-or-later.
 # @package ewsdocker/debian-base
@@ -49,7 +49,7 @@
 # =========================================================================
 
 echo
-echo "Installing \"${LMSBUILD_DOCKER}\""
+echo "Installing \"${LMSBUILD_REPO}/${LMSBUILD_NAME}:${LMSBUILD_VERSION}\""
 echo
 
 lmsVersion
