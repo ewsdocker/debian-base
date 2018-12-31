@@ -2,24 +2,25 @@
 # =========================================================================
 # =========================================================================
 #
-#	lmssetupContainer
-#	  Copy run scripts to /userbin.
+#	container-network
+#	  Creates a network, create container network variables, 
+#       create docker run string for testing.
 #
 # =========================================================================
 #
 # @author Jay Wheeler.
-# @version 0.0.3
+# @version 0.0.1
 # @copyright © 2018. EarthWalk Software.
 # @license Licensed under the GNU General Public License, GPL-3.0-or-later.
 # @package ewsdocker/debian-base
-# @subpackage lmssetupContainer
+# @subpackage container-network
 #
 # =========================================================================
 #
 #	Copyright © 2018. EarthWalk Software
 #	Licensed under the GNU General Public License, GPL-3.0-or-later.
 #
-#   This file is part of ewsdocker/debian-base.
+#   This file is part of ewsdocker/debian-base
 #
 #   ewsdocker/debian-base is free software: you can redistribute 
 #   it and/or modify it under the terms of the GNU General Public License 
@@ -32,57 +33,12 @@
 #   GNU General Public License for more details.
 #
 #   You should have received a copy of the GNU General Public License
-#   along with ewsdocker/debian-base.  If not, see 
+#   along with ewsdocker/debian-base  If not, see 
 #   <http://www.gnu.org/licenses/>.
 #
 # =========================================================================
 # =========================================================================
 
-# =========================================================================
-#
-#   setupContainer
-#
-#		Setup required files in the proper folders
-#
-#	parameters:
-#		none
-#
-#   returns:
-#		0 = no error
-#
-# =========================================================================
-function setupContainer()
-{
-	mkdir -p /usrlocal/share/lms
-	mkdir -p /usrlocal/lib/lms
-	mkdir -p /usrlocal/bin
+source ../lib/lms/lmsNetwork-0.0.1.bash
 
-	cp -r /usr/local/share/*      /usrlocal/share
-	cp -r /usr/local/lib/lms/*    /usrlocal/lib/lms
-
-	cd /usr/local/bin
-
-	for fname in *
-	do
-	    if ! [ -d "${fname}" ]
-	    then
-    		if ! [ -L "${fname}" ] 
-    		then
-    		    if [ -f "/usrlocal/bin/${fname}" ]
-    		    then
-    	            rm "/usrlocal/bin/${fname}"
-    	        fi
-                cp "${fname}" "/usrlocal/bin"
-    	    fi
-        fi
-	done
-
-	lmsContainer="/conf/${LMSBUILD_NAME}-${LMSBUILD_VERSION}"
-    mkdir -p "${lmsContainer}"
-
-	echo "LMS_BASE=${LMS_BASE}" > "${lmsContainer}/lms-base.conf"
-	chmod 755 "${lmsContainer}/lms-base.conf"
-
-    return 0
-}
 

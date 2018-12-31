@@ -80,12 +80,42 @@ function lmsNetIP()
 	lmsNet_info=$(ip route | grep -m1 ${lmsNet_ipAddress} | awk '{print $1}')
 	 [[ $? -eq 0 ]] || return 5
 
+echo "lmsNetIP: routeInfo=$lmsNet_routeInfo, ipGateway=$lmsNet_ipGateway, ipInterface=$lmsNet_ipInterface, ipAddress=$lmsNet_ipAddress, info=$lmsNet_info"
     return 0
 }
 
 # =========================================================================
 #
-#   lmsNetGenMAC address
+#   lmsNetCreate
+#		create a 
+#
+#	parameters:
+#		adapterMAC = adapter MAC address
+#       netName = network name
+#		hostname = host name 
+#	returns:
+#		0 = no errors
+#		non-zero = error code
+#
+# =========================================================================
+function lmsNetCreate()
+{
+	local lGateway="${1}"
+	local lSubnet="${2}"
+	local lName="${3}"
+echo "lmsNetCreate: gateway=$lGateway, subnet=$lSubnet, name=$lName"
+
+	[[ -z "${lGateway}" || -z "${lSubnet}" ||-z "${lName}" ]] && return 1
+
+	docker network create --gateway ${lGateway} --subnet ${lSubnet} ${lName}
+	[[ $? -eq 0 ]] || return 3
+
+	return 0
+}
+
+# =========================================================================
+#
+#   lmsNetGenNewMAC 
 #		generate MAC address from hostname
 #
 #	parameters:
@@ -95,13 +125,13 @@ function lmsNetIP()
 #		non-zero = error code
 #
 # =========================================================================
-function lmsNetGenMAC()
+function lmsNetGenNewMAC()
 {
 	local lhostName="${1}"
 
 	[[ -z "${lhostName}" ]] && return 1
 
-	lmsNet_MAC=$( ${lhostName}|md5sum|sed 's/^\(..\)\(..\)\(..\)\(..\)\(..\).*$/02:\1:\2:\3:\4:\5/' )
+	lmsNet_MAC=$( echo ${lhostName}|md5sum|sed 's/^\(..\)\(..\)\(..\)\(..\)\(..\).*$/02:\1:\2:\3:\4:\5/' )
      [[ $? -eq 0 ]] || return 2
 
     return 0
@@ -127,38 +157,20 @@ function lmsNetGetFreeIp()
 	local lNetName="${2}"
 	local lHostname="${3}"
 
-	lmsNet_containerIP=$(docker run --net ${lNetName} --rm --cap-add NET_ADMIN --mac-address "${lMAC}" busybox udhcpc -x "hostname:${lHostname}" 2>&1 | grep lease | awk '{print $4}')
+echo "lmsNetGetFreeIp: lMAC=$lMAC, lNetName=$lNetName, lHostname=$lHostname"
+
+	commandString="docker run --name=lmsnetwork --net ${lNetName} --rm --cap-add NET_ADMIN --mac-address ${lMAC} busybox udhcpc -x hostname:${lHostname} 2>&1 | grep lease | awk '{print $4}'"
+echo "lmsNetGetFreeIp: $commandString"
+
+echo
+echo $( $commandString )
+echo
+
+#result=$( docker run --name=lmsnetwork --net ${lNetName} --rm --cap-add NET_ADMIN --mac-address ${lMAC} busybox udhcpc -x hostname:${lHostname} )
+#echo $result
+
+#docker run --name=lmsnetwork --net ${lNetName} --rm --cap-add NET_ADMIN --mac-address ${lMAC} busybox udhcpc -x \"hostname:${lHostname}\" 2>&1 | grep lease | awk '{print $4}'
+#	lmsNet_containerIP=$(docker run --name=lmsnetwork --net ${lNetName} --rm --cap-add NET_ADMIN --mac-address ${lMAC} busybox udhcpc -x \"hostname:${lHostname}\" 2>&1 | grep lease | awk '{print $4}')
 	return $?
-}
-
-# =========================================================================
-#
-#   lmsNetCreate
-#		create a 
-#
-#	parameters:
-#		adapterMAC = adapter MAC address
-#       netName = network name
-#		hostname = host name 
-#	returns:
-#		0 = no errors
-#		non-zero = error code
-#
-# =========================================================================
-function lmsNetCreate()
-{
-	local lGateway="${1}"
-	local lSubnet="${2}"
-	local lName="${3}"
-
-	[[ -z "${lGateway}" || -z "${lSubnet}" ||-z "${lName}" ]] || return 1
-
-	lmsNetIP
-	[[ $? -eq 0 ]] || return 2
-
-	docker network create --gateway ${lmsNet_ipGateway} --subnet ${lmsNet_info} ${lmsNet_Name}
-	[[ $? -eq 0 ]] || return 3
-	
-	return 0
 }
 
