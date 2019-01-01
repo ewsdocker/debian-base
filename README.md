@@ -12,7 +12,7 @@ ______
 
 The following scripts will download the the selected **ewsdocker/debian-base** image, create a container, setup and populate the directory structures, and create the run-time scripts.  
 
-The <i>default</i> values will install all directories and contents in the <b>docker host</b> user's home directory (refer to <a href="#mapping">Mapping docker host resources to the docker container</a>, below).  
+The _default_ values will install all directories and contents in the _docker host_ user's home directory (refer to [Mapping docker host resources to the docker container](https://hub.docker.com/r/ewsdocker/debian-base/wiki/QuickStart#mapping"), in the [debian-base wiki](https://hub.docker.com/r/ewsdocker/debian-base/wiki/)).  
 
 **ewsdocker/debian-base:9.6.0**
   
@@ -109,6 +109,6 @@ ______
 
 **Documentation**  
 
-Documentation for this docker image is provided by the original [nimmis/docker-ubuntu](https://github.com/nimmis/docker-ubuntu) docker image documentation at https://github.com/nimmis/docker-ubuntu.  
+Documentation for this docker image is provided by the original [nimmis/docker-ubuntu](https://github.com/nimmis/docker-ubuntu) docker image documentation.  
 
 When following the narrative, replace [nimmis/docker-ubuntu](https://github.com/nimmis/docker-ubuntu) with **ewsdocker/debian-base**, and **ubuntu** with **debian**.  The provided functions and utilities are identical to the original image, except that they are being run under **Debian**.  
