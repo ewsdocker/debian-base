@@ -8,15 +8,15 @@
 # =========================================================================
 #
 # @author Jay Wheeler.
-# @version 9.6.0
-# @copyright © 2017, 2018. EarthWalk Software.
+# @version 9.6.1
+# @copyright © 2017-2019. EarthWalk Software.
 # @license Licensed under the GNU General Public License, GPL-3.0-or-later.
 # @package ewsdocker/debian-base
 # @subpackage Dockerfile
 #
 # =========================================================================
 #
-#	Copyright © 2017, 2018. EarthWalk Software
+#	Copyright © 2017-2019. EarthWalk Software
 #	Licensed under the GNU General Public License, GPL-3.0-or-later.
 #
 #   This file is part of ewsdocker/debian-base.
@@ -43,6 +43,33 @@ MAINTAINER Jay Wheeler <ewsdocker@gmail.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 
+# ==============================================================================
+# ==============================================================================
+#
+# https://github.com/ewsdocker/lms-utilities/releases/download/lms-utilities-0.1.0/lms-library-0.1.0.tar.gz
+#
+# ==============================================================================
+# ==============================================================================
+
+# =========================================================================
+#
+#   ARG_SOURCE <== url of the local source (http://alpine-nginx-pkgcache), 
+#                   otherwise external source.
+#
+#       Build option:
+#         --build-arg ARG_SOURCE=http://alpine-nginx-pkgcache --network=pkgnet
+#
+# =========================================================================
+
+ARG ARG_SOURCE
+
+ENV PKG_VERS="0.1.0"
+ENV PKG_HOST=${ARG_SOURCE:-"https://github.com/ewsdocker/lms-utilities/releases/download/lms-utilities-${PKG_VERS}"}
+
+ENV PKG_NAME="lms-library-${PKG_VERS}.tar.gz"
+ENV PKG_DIR=usr
+ENV PKG_URL=${PKG_HOST}/${PKG_NAME}
+
 # =========================================================================
 #
 # Global options
@@ -62,7 +89,7 @@ ENV LMS_BASE="/usr/local"
 
 # =========================================================================
 
-ENV LMSBUILD_VERSION="9.6.0"
+ENV LMSBUILD_VERSION="9.6.1"
 ENV LMSBUILD_NAME=debian-base 
 ENV LMSBUILD_REPO=ewsdocker
 ENV LMSBUILD_REGISTRY=""
@@ -115,19 +142,25 @@ RUN dpkg-divert --local --rename --add /sbin/initctl \
  && echo "Debian v. $(cat /etc/debian_version)" >  /etc/ewsdocker-builds.txt \
  && printf "${LMSBUILD_DOCKER} (${LMSBUILD_PACKAGE}), %s @ %s\n" `date '+%Y-%m-%d'` `date '+%H:%M:%S'` >> /etc/ewsdocker-builds.txt  
 
+RUN cd / \
+ && wget "${PKG_URL}" \
+ && tar -xvf "${PKG_NAME}" \
+ && rm "${PKG_NAME}"
+
 # =========================================================================
 
 COPY scripts/. /
 
 RUN chmod 775 /usr/local/bin/*.* \
- && chmod 775 /usr/bin/lms/setup \
- && ln -s /usr/bin/lms/setup /usr/bin/lms-setup \
- && ln -s /usr/bin/lms/version /usr/bin/lms-version
+ && chmod 775 /usr/bin/lms/*.* \
+ && ln -s /usr/bin/lms/lms-setup.sh /usr/bin/lms-setup \
+ && ln -s /usr/bin/lms/lms-version.sh /usr/bin/lms-version
 
 # =========================================================================
 
 VOLUME /conf
 VOLUME /usrlocal
+
 ENV HOME /root
 WORKDIR /root
 
