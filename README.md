@@ -4,6 +4,14 @@
 
 ______  
 
+#### GitHub Current Source is EDGE
+The _9.6.1_ version is now under development. It will show itself as _EDGE_ in [Docker Tags](https://hub.docker.com/r/ewsdocker/debian-base/tags/).  The _9.6.1_ and _EDGE_ tags are development versions of GitHub source and debian-base Docker image, respectively.  
+
+The _9.6.0_ source version (also the current [Docker Tag](https://hub.docker.com/r/ewsdocker/debian-base/tags/) version) is available from the [GitHub Tags](https://github.com/ewsdocker/debian-base/tree/9.6.0) release tree in the _Branch_/_Tags_ selector box.
+
+Documentation for the _9.6.0_ release is still available on the [debian-base wiki](https://github.com/ewsdocker/debian-base/wiki).  
+
+____  
 A pre-made docker image of **ewsdocker/debian-base** is available from [ewsdocker/debian-base](https://hub.docker.com/r/ewsdocker/debian-base/) at [Docker Hub](https://hub.docker.com).  
 ______  
 
