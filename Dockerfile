@@ -97,7 +97,7 @@ ARG ARGBUILD_REGISTRY
 
 ENV PKG_VERS="${ARG_LIBRARY}"
 
-ENV PKG_HOST=${ARG_SOURCE:-"https://github.com/ewsdocker/lms-utilities/releases/download/lms-utilities-${PKG_VERS}"} 
+ENV PKG_HOST=${ARG_SOURCE:-"https://github.com/ewsdocker/lms-utilities/releases/download/lms-library-${PKG_VERS}"} 
 ENV PKG_NAME="lms-library-${PKG_VERS}.tar.gz" 
 ENV PKG_DIR="usr" 
 ENV PKG_URL="${PKG_HOST}/${PKG_NAME}"
