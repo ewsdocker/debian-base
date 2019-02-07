@@ -8,7 +8,7 @@
 # =========================================================================
 #
 # @author Jay Wheeler.
-# @version 9.6.1
+# @version 9.6.2
 # @copyright © 2017-2019. EarthWalk Software.
 # @license Licensed under the GNU General Public License, GPL-3.0-or-later.
 # @package ewsdocker/debian-base
@@ -37,7 +37,22 @@
 #
 # =========================================================================
 # =========================================================================
-FROM debian:9.6
+
+ARG ARG_VERSION="9.6.2"
+ARG ARG_VERS_EXT=
+
+ARG ARG_LIBRARY="0.1.1"
+ARG ARG_SOURCE=
+
+# ==============================================================================
+
+ARG ARG_FROM_REPO="Debian"
+ARG ARG_FROM_VERS="9.6"
+ARG ARG_FROM_EXT=
+
+FROM ${ARG_FROM_REPO}:${ARG_FROM_VERS}
+
+# ==============================================================================
 
 MAINTAINER Jay Wheeler <ewsdocker@gmail.com>
 
@@ -46,7 +61,7 @@ ENV DEBIAN_FRONTEND noninteractive
 # ==============================================================================
 # ==============================================================================
 #
-# https://github.com/ewsdocker/lms-utilities/releases/download/lms-utilities-0.1.0/lms-library-0.1.0.tar.gz
+# https://github.com/ewsdocker/lms-utilities/releases/download/lms-utilities-0.1.1/lms-library-0.1.1.tar.gz
 #
 # ==============================================================================
 # ==============================================================================
@@ -61,9 +76,25 @@ ENV DEBIAN_FRONTEND noninteractive
 #
 # =========================================================================
 
+ARG ARG_VERSION
+ARG ARG_VERS_EXT
+
+ARG ARG_FROM_REPO
+ARG ARG_FROM_VERS
+ARG ARG_FROM_EXT
+
+ARG ARG_LIBRARY
 ARG ARG_SOURCE
 
-ENV PKG_VERS="0.1.0"
+ARG ARGBUILD_VERSION
+
+ARG ARGBUILD_NAME 
+ARG ARGBUILD_REPO
+ARG ARGBUILD_REGISTRY
+
+# =========================================================================
+
+ENV PKG_VERS="${ARG_LIBRARY}"
 ENV PKG_HOST=${ARG_SOURCE:-"https://github.com/ewsdocker/lms-utilities/releases/download/lms-utilities-${PKG_VERS}"}
 
 ENV PKG_NAME="lms-library-${PKG_VERS}.tar.gz"
@@ -77,7 +108,6 @@ ENV PKG_URL=${PKG_HOST}/${PKG_NAME}
 # =========================================================================
 
 ENV LMSOPT_QUIET=1
-ENV LMSOPT_TIMEOUT=30
 
 # =========================================================================
 #
@@ -95,15 +125,29 @@ ENV LMSBUILD_REPO=ewsdocker
 ENV LMSBUILD_REGISTRY=""
 
 ENV LMSBUILD_DOCKER="${LMSBUILD_REPO}/${LMSBUILD_NAME}:${LMSBUILD_VERSION}" 
-ENV LMSBUILD_PACKAGE="debian-9.6"
+ENV LMSBUILD_PACKAGE="${ARG_FROM_REPO}:${ARG_FROM_VERS}"
 
 # =========================================================================
 
-RUN dpkg-divert --local --rename --add /sbin/initctl \
+COPY scripts/. /
+
+# =========================================================================
+
+RUN \
+ #
+ #
+ #
+ dpkg-divert --local --rename --add /sbin/initctl \
+ #
+ #  setup apt
+ #
  && ln -sf /bin/true /sbin/initctl \
  && echo 'APT::Install-Recommends 0;' >> /etc/apt/apt.conf.d/01norecommends \
  && echo 'APT::Install-Suggests 0;' >> /etc/apt/apt.conf.d/01norecommends \
  && sed -i 's/^#\s*\(deb.*multiverse\)$/\1/g' /etc/apt/sources.list \
+ #
+ #  update the apt cache, install package upgrades and install required software
+ #
  && apt-get -y update \
  && apt-get -y upgrade \
  && apt-get -y install \
@@ -132,35 +176,44 @@ RUN dpkg-divert --local --rename --add /sbin/initctl \
        zip \
  && apt-get -y dist-upgrade \
  && apt-get clean all \
+ #
+ #   generate locale for en_US
+ #
  && locale-gen en_US \
  && update-locale LANG=C.UTF-8 LC_MESSAGES=POSIX \
+ #
+ #   fixes for ubuntu/debian
+ #
  && mkdir -p /etc/workaround-docker-2267/ \
  && mkdir -p /etc/container_environment \
  && mkdir -p /etc/my_runonce \
  && mkdir -p /etc/my_runalways \
  && sed -i -E 's/^(\s*)system\(\);/\1unix-stream("\/dev\/log");/' /etc/syslog-ng/syslog-ng.conf \
+ #
+ #   download and install lms-library
+ #
  && cd / \
  && wget "${PKG_URL}" \
  && tar -xvf "${PKG_NAME}" \
  && rm "${PKG_NAME}" \
+ #
+ #   register the installed software
+ #
  && echo "Debian v. $(cat /etc/debian_version)" >  /etc/ewsdocker-builds.txt \
- && printf "${LMSBUILD_DOCKER} (${LMSBUILD_PACKAGE}), %s @ %s\n" `date '+%Y-%m-%d'` `date '+%H:%M:%S'` >> /etc/ewsdocker-builds.txt  
-
-# =========================================================================
-
-COPY scripts/. /
-
-RUN chmod 775 /usr/local/bin/*.* \
+ && printf "${LMSBUILD_DOCKER} (${LMSBUILD_PACKAGE}), %s @ %s\n" `date '+%Y-%m-%d'` `date '+%H:%M:%S'` >> /etc/ewsdocker-builds.txt  \
+ #
+ #   setup install libraries and applications to run
+ #
+ && chmod 775 /usr/local/bin/*.* \
  && chmod 775 /usr/bin/lms/*.* \
  && ln -s /usr/bin/lms/lms-setup.sh /usr/bin/lms-setup \
  && ln -s /usr/bin/lms/lms-version.sh /usr/bin/lms-version
-
+ 
 # =========================================================================
 
 VOLUME /conf
 VOLUME /usrlocal
 
-ENV HOME /root
 WORKDIR /root
 
 # =========================================================================

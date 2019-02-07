@@ -1,15 +1,15 @@
-### ewsdocker/debian-base:9.6.1
+### ewsdocker/debian-base:9.6.2
 
 **ewsdocker/debian-base** is a version of the [nimmis/docker-ubuntu](https://github.com/nimmis/docker-ubuntu) docker image modified for use with **Debian 9**.  It adds several system utilities and libraries that are nominally required to properly utilize the **library/debian** docker image, and adds system initialization and supervisor functions for better control.  
 
 ______  
 
 #### GitHub Current Source is EDGE
-The _9.6.1_ version is now under development. It will show itself as _EDGE_ in [Docker Tags](https://hub.docker.com/r/ewsdocker/debian-base/tags/).  The _9.6.1_ and _EDGE_ tags are development versions of GitHub source and debian-base Docker image, respectively.  
+The _9.6.2_ version is now under development. It will show itself as _edit_ in [Docker Tags](https://hub.docker.com/r/ewsdocker/debian-base/tags/).  The _9.6.2_ and _edit_ tags are development versions of GitHub source and debian-base Docker image, respectively.  
 
-The _9.6.0_ source version (also the current [Docker Tag](https://hub.docker.com/r/ewsdocker/debian-base/tags/) version) is available from the [GitHub Tags](https://github.com/ewsdocker/debian-base/tree/9.6.0) release tree in the _Branch_/_Tags_ selector box.
+The _9.6.1_ source version (also the current [Docker Tag](https://hub.docker.com/r/ewsdocker/debian-base/tags/) version) is available from the [GitHub Tags](https://github.com/ewsdocker/debian-base/tree/9.6.1) release tree in the _Branch_/_Tags_ selector box.
 
-Documentation for the _9.6.0_ release is still available on the [debian-base wiki](https://github.com/ewsdocker/debian-base/wiki).  
+Documentation for the _9.6.1_ release is still available on the [debian-base wiki](https://github.com/ewsdocker/debian-base/wiki).  
 
 ____  
 A pre-made docker image of **ewsdocker/debian-base** is available from [ewsdocker/debian-base](https://hub.docker.com/r/ewsdocker/debian-base/) at [Docker Hub](https://hub.docker.com).  
@@ -22,16 +22,16 @@ The following scripts will download the the selected **ewsdocker/debian-base** i
 
 The _default_ values will install all directories and contents in the _docker host_ user's home directory (refer to [Mapping docker host resources to the docker container](https://hub.docker.com/r/ewsdocker/debian-base/wiki/QuickStart#mapping"), in the [debian-base wiki](https://hub.docker.com/r/ewsdocker/debian-base/wiki/)).  
 
-**ewsdocker/debian-base:9.6.1**
+**ewsdocker/debian-base:9.6.2**
   
     docker run --rm \
                -v ${HOME}/bin:/userbin \
                -v ${HOME}/.local:/usrlocal \
                -e LMS_BASE="${HOME}/.local" \
                -v ${HOME}/.config/docker:/conf \
-               -v ${HOME}/.config/docker/debian-base-9.6.1:/root \
-               --name=debian-base-9.6.1 \
-           ewsdocker/debian-base:9.6.1 lms-setup  
+               -v ${HOME}/.config/docker/debian-base-9.6.2:/root \
+               --name=debian-base-9.6.2 \
+           ewsdocker/debian-base:9.6.2 lms-setup  
 
 ____  
 
@@ -46,15 +46,15 @@ ____
 
 **Execution scripts**  
 
-**ewsdocker/debian-base:9.6.1**  
+**ewsdocker/debian-base:9.6.2**  
   
     docker run -d \
            --rm \
            -v /etc/localtime:/etc/localtime:ro \
-           -v ${HOME}/workspace-base-9.6.1:/workspace \
-           -v ${HOME}/.config/docker/debian-base-9.6.1:/root \
-           --name=debian-base-9.6.1 \
-       ewsdocker/debian-base:9.6.1  
+           -v ${HOME}/workspace-base-9.6.2:/workspace \
+           -v ${HOME}/.config/docker/debian-base-9.6.2:/root \
+           --name=debian-base-9.6.2 \
+       ewsdocker/debian-base:9.6.2  
 
 ____  
 
@@ -64,7 +64,7 @@ ____
 **Test 1**  
 Copy the docker command above (**Creating a container**) and paste it into a docker host command line to create a temporary docker container named *base*.  The docker container will display it's startup status, something like this:  
 
-    docker exec -it -t debian-base-9.6.1 /bin/bash 
+    docker exec -it -t debian-base-9.6.2 /bin/bash 
 
 
 Press the Ctrl/C combination and the container should exit, something similar to  
