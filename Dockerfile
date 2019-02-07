@@ -38,15 +38,16 @@
 # =========================================================================
 # =========================================================================
 
-ARG ARG_VERSION="9.6.2"
-ARG ARG_VERS_EXT=
+ARG ARGBUILD_NAME="debian-base"
+ARG ARGBUILD_VERSION="9.6.2"
+ARG ARGBUILD_EXT=
 
 ARG ARG_LIBRARY="0.1.1"
 ARG ARG_SOURCE=
 
 # ==============================================================================
 
-ARG ARG_FROM_REPO="Debian"
+ARG ARG_FROM_REPO="debian"
 ARG ARG_FROM_VERS="9.6"
 ARG ARG_FROM_EXT=
 
@@ -95,42 +96,35 @@ ARG ARGBUILD_REGISTRY
 # =========================================================================
 
 ENV PKG_VERS="${ARG_LIBRARY}"
-ENV PKG_HOST=${ARG_SOURCE:-"https://github.com/ewsdocker/lms-utilities/releases/download/lms-utilities-${PKG_VERS}"}
 
-ENV PKG_NAME="lms-library-${PKG_VERS}.tar.gz"
-ENV PKG_DIR=usr
-ENV PKG_URL=${PKG_HOST}/${PKG_NAME}
-
-# =========================================================================
-#
-# Global options
-#
-# =========================================================================
-
-ENV LMSOPT_QUIET=1
+ENV PKG_HOST=${ARG_SOURCE:-"https://github.com/ewsdocker/lms-utilities/releases/download/lms-utilities-${PKG_VERS}"} 
+ENV PKG_NAME="lms-library-${PKG_VERS}.tar.gz" 
+ENV PKG_DIR="usr" 
+ENV PKG_URL="${PKG_HOST}/${PKG_NAME}"
 
 # =========================================================================
 #
-# set the LMS directories on the docker host
+# Additional settings
 #
 # =========================================================================
 
-ENV LMS_BASE="/usr/local"
+ENV LMSOPT_QUIET=1 
 
-# =========================================================================
+ENV LMS_BASE="/usr/local" 
 
-ENV LMSBUILD_VERSION="9.6.1"
-ENV LMSBUILD_NAME=debian-base 
 ENV LMSBUILD_REPO=ewsdocker
-ENV LMSBUILD_REGISTRY=""
 
-ENV LMSBUILD_DOCKER="${LMSBUILD_REPO}/${LMSBUILD_NAME}:${LMSBUILD_VERSION}" 
+ENV LMSBUILD_REGISTRY=""
+ENV LMSBUILD_NAME=debian-base
+ENV LMSBUILD_VERSION="${ARG_VERSION}"
+
+ENV LMSBUILD_DOCKER="${LMSBUILD_REPO}/${LMSBUILD_NAME}:${LMSBUILD_VERSION}"
 ENV LMSBUILD_PACKAGE="${ARG_FROM_REPO}:${ARG_FROM_VERS}"
 
 # =========================================================================
-
-COPY scripts/. /
-
+#
+#   install packages and applications
+#
 # =========================================================================
 
 RUN \
@@ -192,7 +186,6 @@ RUN \
  #
  #   download and install lms-library
  #
- && cd / \
  && wget "${PKG_URL}" \
  && tar -xvf "${PKG_NAME}" \
  && rm "${PKG_NAME}" \
@@ -200,15 +193,27 @@ RUN \
  #   register the installed software
  #
  && echo "Debian v. $(cat /etc/debian_version)" >  /etc/ewsdocker-builds.txt \
- && printf "${LMSBUILD_DOCKER} (${LMSBUILD_PACKAGE}), %s @ %s\n" `date '+%Y-%m-%d'` `date '+%H:%M:%S'` >> /etc/ewsdocker-builds.txt  \
- #
- #   setup install libraries and applications to run
- #
- && chmod 775 /usr/local/bin/*.* \
+ && printf "${LMSBUILD_DOCKER} (${LMSBUILD_PACKAGE}), %s @ %s\n" `date '+%Y-%m-%d'` `date '+%H:%M:%S'` >> /etc/ewsdocker-builds.txt  
+ 
+# =========================================================================
+#
+#   install required scripts
+#
+# =========================================================================
+
+COPY scripts/. /
+
+# =========================================================================
+#
+#   setup libraries and applications to run
+#
+# =========================================================================
+
+RUN chmod 775 /usr/local/bin/*.* \
  && chmod 775 /usr/bin/lms/*.* \
  && ln -s /usr/bin/lms/lms-setup.sh /usr/bin/lms-setup \
  && ln -s /usr/bin/lms/lms-version.sh /usr/bin/lms-version
- 
+
 # =========================================================================
 
 VOLUME /conf

@@ -12,7 +12,7 @@ The _9.6.1_ source version (also the current [Docker Tag](https://hub.docker.com
 Documentation for the _9.6.1_ release is still available on the [debian-base wiki](https://github.com/ewsdocker/debian-base/wiki).  
 
 ____  
-A pre-made docker image of **ewsdocker/debian-base** is available from [ewsdocker/debian-base](https://hub.docker.com/r/ewsdocker/debian-base/) at [Docker Hub](https://hub.docker.com).  
+Pre-made docker images of **ewsdocker/debian-base** is available from [ewsdocker/debian-base](https://hub.docker.com/r/ewsdocker/debian-base/) at [Docker Hub](https://hub.docker.com).  
 ______  
 
 
