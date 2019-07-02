@@ -8,7 +8,7 @@
 # =========================================================================
 #
 # @author Jay Wheeler.
-# @version 9.6.2
+# @version 9.6.3
 # @copyright © 2017-2019. EarthWalk Software.
 # @license Licensed under the GNU General Public License, GPL-3.0-or-later.
 # @package ewsdocker/debian-base
@@ -39,11 +39,11 @@
 # =========================================================================
 
 ARG ARGBUILD_NAME="debian-base"
-ARG ARGBUILD_VERSION="9.6.2"
+ARG ARGBUILD_VERSION="9.6.3"
 ARG ARGBUILD_EXT=
 
-ARG ARG_LIBRARY="0.1.1"
-ARG ARG_SOURCE=
+ARG ARG_LIBRARY="0.1.2"
+#ARG ARG_SOURCE=http://alpine-nginx-pkgcache
 
 # ==============================================================================
 
@@ -62,7 +62,7 @@ ENV DEBIAN_FRONTEND noninteractive
 # ==============================================================================
 # ==============================================================================
 #
-# https://github.com/ewsdocker/lms-utilities/releases/download/lms-utilities-0.1.1/lms-library-0.1.1.tar.gz
+# https://github.com/ewsdocker/lms-utilities/releases/download/lms-utilities-0.1.2/lms-library-0.1.2.tar.gz
 #
 # ==============================================================================
 # ==============================================================================
@@ -77,8 +77,11 @@ ENV DEBIAN_FRONTEND noninteractive
 #
 # =========================================================================
 
-ARG ARG_VERSION
-ARG ARG_VERS_EXT
+ARG ARGBUILD_VERSION
+
+ARG ARGBUILD_NAME 
+ARG ARGBUILD_REPO
+ARG ARGBUILD_REGISTRY
 
 ARG ARG_FROM_REPO
 ARG ARG_FROM_VERS
@@ -86,12 +89,6 @@ ARG ARG_FROM_EXT
 
 ARG ARG_LIBRARY
 ARG ARG_SOURCE
-
-ARG ARGBUILD_VERSION
-
-ARG ARGBUILD_NAME 
-ARG ARGBUILD_REPO
-ARG ARGBUILD_REGISTRY
 
 # =========================================================================
 
@@ -116,10 +113,18 @@ ENV LMSBUILD_REPO=ewsdocker
 
 ENV LMSBUILD_REGISTRY=""
 ENV LMSBUILD_NAME=debian-base
-ENV LMSBUILD_VERSION="${ARG_VERSION}"
+ENV LMSBUILD_VERSION="${ARGBUILD_VERSION}"
 
 ENV LMSBUILD_DOCKER="${LMSBUILD_REPO}/${LMSBUILD_NAME}:${LMSBUILD_VERSION}"
 ENV LMSBUILD_PACKAGE="${ARG_FROM_REPO}:${ARG_FROM_VERS}"
+
+# =========================================================================
+#
+#   install required scripts
+#
+# =========================================================================
+
+COPY scripts/. /
 
 # =========================================================================
 #
@@ -186,6 +191,7 @@ RUN \
  #
  #   download and install lms-library
  #
+ && cd / \
  && wget "${PKG_URL}" \
  && tar -xvf "${PKG_NAME}" \
  && rm "${PKG_NAME}" \
@@ -195,14 +201,6 @@ RUN \
  && echo "Debian v. $(cat /etc/debian_version)" >  /etc/ewsdocker-builds.txt \
  && printf "${LMSBUILD_DOCKER} (${LMSBUILD_PACKAGE}), %s @ %s\n" `date '+%Y-%m-%d'` `date '+%H:%M:%S'` >> /etc/ewsdocker-builds.txt  
  
-# =========================================================================
-#
-#   install required scripts
-#
-# =========================================================================
-
-COPY scripts/. /
-
 # =========================================================================
 #
 #   setup libraries and applications to run
